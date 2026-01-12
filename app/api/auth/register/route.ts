@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
-
-const API_URL = "http://localhost:3001"
+import { API_URL } from "@/config"
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null)

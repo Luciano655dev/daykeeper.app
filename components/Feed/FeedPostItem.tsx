@@ -7,13 +7,12 @@ import FeedPostMediaStrip from "./FeedPostMediaStrip"
 import { apiFetch } from "@/lib/authClient"
 import { useRouter } from "next/navigation"
 import ReportPostModal from "./ReportPostModal"
+import { API_URL } from "@/config"
 
 type Props = {
   post: FeedPost
   isLast: boolean
 }
-
-const API_URL = "http://localhost:3001"
 
 export default function FeedPostItem({ post, isLast }: Props) {
   const [liked, setLiked] = useState(!!post.userLiked)

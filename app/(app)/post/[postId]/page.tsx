@@ -8,7 +8,7 @@ import type { FeedPost } from "@/lib/feedTypes"
 import PostDetailCard from "@/components/Post/PostDetailCard"
 import CommentsSection from "@/components/Post/CommentsSection"
 
-const API_URL = "http://localhost:3001"
+import { API_URL } from "@/config"
 
 type UserInfo = {
   _id: string

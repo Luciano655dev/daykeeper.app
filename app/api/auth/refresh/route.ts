@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { cookies, headers } from "next/headers"
-
-const API_URL = "http://localhost:3001"
+import { API_URL } from "@/config"
 const isProd = process.env.NODE_ENV === "production"
 
 const refreshCookieOptions = {

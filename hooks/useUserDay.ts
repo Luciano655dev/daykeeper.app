@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { apiFetch } from "@/lib/authClient"
-
-const API_URL = "http://localhost:3001"
+import { API_URL } from "@/config"
 
 type ApiOk<T> = { code?: number; message?: string; data: T }
 type DayResponse = {

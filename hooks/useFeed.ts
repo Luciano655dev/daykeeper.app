@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { apiFetch } from "@/lib/authClient"
 import { normalizeFeedPayload, type FeedUserDay } from "@/lib/feedTypes"
 import { toDDMMYYYY } from "@/lib/date"
+import { API_URL } from "@/config"
 
-const API_URL = "http://localhost:3001"
 const PAGE_SIZE = 20
 
 type FeedResponse = {

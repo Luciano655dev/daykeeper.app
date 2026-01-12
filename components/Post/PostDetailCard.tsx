@@ -6,8 +6,8 @@ import { Clock, Heart, MessageCircle } from "lucide-react"
 import FeedPostMediaStrip from "@/components/Feed/FeedPostMediaStrip"
 import { apiFetch } from "@/lib/authClient"
 import type { FeedPost } from "@/lib/feedTypes"
+import { API_URL } from "@/config"
 
-const API_URL = "http://localhost:3001"
 const AVATAR_FALLBACK = "/avatar-placeholder.png"
 
 type UserInfo = {

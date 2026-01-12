@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react"
 import { Flag } from "lucide-react"
 import { apiFetch } from "@/lib/authClient"
-
-const API_URL = "http://localhost:3001"
+import { API_URL } from "@/config"
 
 type Props = {
   name: string
