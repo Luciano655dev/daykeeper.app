@@ -14,9 +14,10 @@ export default function AuthLoading() {
       <div className="flex flex-col items-center gap-4 animate-fade-in">
         <Image
           src="/logo-main.svg"
-          alt="DayKeeper"
+          alt="Daykeeper"
           width={64}
           height={64}
+          className="w-auto h-auto"
           priority
         />
 

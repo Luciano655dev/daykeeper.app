@@ -19,7 +19,6 @@ async function logoutClient(reason?: string) {
     })
   } catch {}
 
-  // optional: console.log(reason ?? "Logged out")
   window.location.href = "/login"
 }
 
@@ -70,7 +69,6 @@ export async function apiFetch(url: string, init: RequestInit = {}) {
     })
 
   let res = await doFetch()
-  console.log(res)
   if (res.status !== 401) return res
 
   const newToken = await refreshAccessToken()

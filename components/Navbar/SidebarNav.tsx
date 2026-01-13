@@ -36,7 +36,13 @@ export default function SidebarNav() {
           href="/"
           className="px-6 py-5 border-b border-(--dk-ink)/10 flex items-center gap-3 hover:bg-[color-mix(in_srgb,var(--dk-mist)_40%,transparent)]"
         >
-          <Image src="/logo-main.svg" alt="Daykeeper" width={22} height={22} />
+          <Image
+            src="/logo-main.svg"
+            alt="Daykeeper"
+            width={22}
+            height={22}
+            priority
+          />
           <span className="text-xl font-bold text-(--dk-ink)">Daykeeper</span>
         </Link>
 

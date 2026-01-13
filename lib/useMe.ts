@@ -17,7 +17,6 @@ export function useMe() {
     async function load() {
       try {
         const res = await apiFetch("http://localhost:3001/auth/user")
-        console.log(res)
         if (!res.ok) return
         const data = await res.json()
         if (alive) setMe(data?.user ?? null)

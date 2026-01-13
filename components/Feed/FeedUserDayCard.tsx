@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import { toDayParam } from "@/lib/date"
 
 export default function FeedUserDayCard({ userDay, selectedDate }: any) {
-  console.log(toDayParam(selectedDate))
   const router = useRouter()
   // dummy day meta (replace with API fields later)
   const dayMeta = useMemo(() => {

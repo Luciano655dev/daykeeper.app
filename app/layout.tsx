@@ -1,6 +1,7 @@
 import "./globals.css"
 import { Inter } from "next/font/google"
 import type { Metadata } from "next"
+import Providers from "./providers"
 
 export const metadata: Metadata = {
   title: "Daykeeper",
@@ -45,7 +46,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className}  bg-(--dk-paper)`}>{children}</body>
+      <body className={`${inter.className}  bg-(--dk-paper)`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }

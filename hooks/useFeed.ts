@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useCallback } from "react"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/authClient"
 import { normalizeFeedPayload, type FeedUserDay } from "@/lib/feedTypes"
 import { toDDMMYYYY } from "@/lib/date"
@@ -17,115 +18,87 @@ type FeedResponse = {
   totalCount: number
 }
 
+async function fetchFeedPage(
+  dateParam: string,
+  page: number
+): Promise<FeedResponse> {
+  const qs = new URLSearchParams({
+    date: dateParam,
+    page: String(page),
+    maxPageSize: String(PAGE_SIZE),
+  })
+
+  const res = await apiFetch(`${API_URL}/?${qs.toString()}`, {
+    method: "GET",
+    cache: "no-store",
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new Error(text || `Request failed (${res.status})`)
+  }
+
+  return (await res.json().catch(() => ({}))) as FeedResponse
+}
+
 export function useFeed(selectedDate: Date) {
   const dateParam = useMemo(() => toDDMMYYYY(selectedDate), [selectedDate])
 
-  const [items, setItems] = useState<FeedUserDay[]>([])
-  const [loadingFirst, setLoadingFirst] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalCount, setTotalCount] = useState(0)
-
-  // prevents double-fetch if intersection fires multiple times
-  const inFlightRef = useRef(false)
-
-  const hasMore = page < totalPages
-
-  const fetchPage = useCallback(
-    async (targetPage: number, mode: "replace" | "append") => {
-      if (inFlightRef.current) return
-      inFlightRef.current = true
-
-      setError(null)
-      if (mode === "replace") setLoadingFirst(true)
-      else setLoadingMore(true)
-
-      try {
-        const qs = new URLSearchParams({
-          date: dateParam,
-          page: String(targetPage),
-          maxPageSize: String(PAGE_SIZE),
-        })
-
-        const res = await apiFetch(`${API_URL}/?${qs.toString()}`, {
-          method: "GET",
-          cache: "no-store",
-        })
-
-        if (!res.ok) {
-          const text = await res.text().catch(() => "")
-          throw new Error(text || `Request failed (${res.status})`)
-        }
-
-        const json = (await res.json().catch(() => ({}))) as FeedResponse
-
-        const normalized = normalizeFeedPayload(json) as FeedUserDay[]
-
-        setPage(json.page ?? targetPage)
-        setTotalPages(json.totalPages ?? 1)
-        setTotalCount(json.totalCount ?? 0)
-
-        setItems((prev) => {
-          if (mode === "replace") return normalized
-
-          // ✅ de-dupe by userId so you don’t duplicate when server shifts
-          const map = new Map<string | number, FeedUserDay>()
-          for (const it of prev) map.set(it.userId, it)
-          for (const it of normalized) map.set(it.userId, it)
-          return Array.from(map.values())
-        })
-      } catch (e: any) {
-        setError(e?.message || "Failed to load feed")
-        if (mode === "replace") setItems([])
-      } finally {
-        if (mode === "replace") setLoadingFirst(false)
-        else setLoadingMore(false)
-        inFlightRef.current = false
-      }
+  const q = useInfiniteQuery({
+    queryKey: ["feed", dateParam],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) => fetchFeedPage(dateParam, Number(pageParam)),
+    getNextPageParam: (lastPage) => {
+      const page = lastPage?.page ?? 1
+      const totalPages = lastPage?.totalPages ?? 1
+      return page < totalPages ? page + 1 : undefined
     },
-    [dateParam]
-  )
+    enabled: !!dateParam,
+  })
 
-  // ✅ initial load + reset when date changes
-  useEffect(() => {
-    setItems([])
-    setPage(1)
-    setTotalPages(1)
-    setTotalCount(0)
-    fetchPage(1, "replace")
-  }, [fetchPage])
+  // flatten + normalize + de-dupe
+  const items: FeedUserDay[] = useMemo(() => {
+    const pages = q.data?.pages ?? []
+    const all = pages.flatMap(
+      (p) => (normalizeFeedPayload(p) as FeedUserDay[]) ?? []
+    )
 
-  const reload = useCallback(() => {
-    // re-fetch page 1
-    setItems([])
-    setPage(1)
-    setTotalPages(1)
-    setTotalCount(0)
-    fetchPage(1, "replace")
-  }, [fetchPage])
+    // keep your de-dupe (useful if server shifts paging)
+    const map = new Map<string | number, FeedUserDay>()
+    for (const it of all) map.set(it.userId, it)
+    return Array.from(map.values())
+  }, [q.data])
+
+  const last = q.data?.pages?.[q.data.pages.length - 1]
+  const page = last?.page ?? 1
+  const totalPages = last?.totalPages ?? 1
+  const totalCount = last?.totalCount ?? 0
 
   const loadMore = useCallback(() => {
-    if (!hasMore) return
-    if (loadingFirst || loadingMore) return
-    fetchPage(page + 1, "append")
-  }, [fetchPage, hasMore, loadingFirst, loadingMore, page])
+    if (q.hasNextPage && !q.isFetchingNextPage) q.fetchNextPage()
+  }, [q])
+
+  const reload = useCallback(() => {
+    q.refetch()
+  }, [q])
 
   return {
     data: items,
-    loading: loadingFirst, // keep your current prop usage
-    loadingFirst,
-    loadingMore,
-    error,
+
+    // keep your prop names
+    loading: q.isLoading,
+    loadingFirst: q.isLoading,
+    loadingMore: q.isFetchingNextPage,
+    error: q.error ? (q.error as any).message : null,
+
     reload,
     loadMore,
-    hasMore,
+    hasMore: !!q.hasNextPage,
+
     page,
     totalPages,
     totalCount,
-    usersCount: totalCount, // if you want “X users posted”
+    usersCount: totalCount,
     dateParam,
   }
 }

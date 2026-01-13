@@ -61,7 +61,6 @@ export default function LoginPage() {
       }
 
       const token = data?.accessToken as string | undefined
-      console.log(data)
       if (!token) {
         setError("Login succeeded but no access token was returned.")
         return

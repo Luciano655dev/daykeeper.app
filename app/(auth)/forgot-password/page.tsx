@@ -41,8 +41,6 @@ export default function ForgotPasswordPage() {
         credentials: "include",
         body: JSON.stringify({ email: cleanEmail }),
       })
-      console.log("Front Done")
-      console.log(res)
 
       // Move to reset-password with email as query
       router.push(`/reset-password?email=${encodeURIComponent(cleanEmail)}`)

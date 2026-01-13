@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useMemo } from "react"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
@@ -21,89 +22,66 @@ type CommentsResponse = {
   totalPages?: number
 }
 
-export function usePostComments(postId: string | undefined) {
-  const [items, setItems] = useState<PostComment[]>([])
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState<number | null>(null)
+async function fetchCommentsPage(
+  postId: string,
+  page: number
+): Promise<CommentsResponse> {
+  const qs = new URLSearchParams({
+    page: String(page),
+    maxPageSize: "10",
+  })
 
-  const [loading, setLoading] = useState(false) // only for first load
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const inFlightRef = useRef(false)
-  const postIdRef = useRef<string | undefined>(postId)
-
-  useEffect(() => {
-    postIdRef.current = postId
-  }, [postId])
-
-  const hasMore = useMemo(() => {
-    if (totalPages == null) return true
-    return page < totalPages
-  }, [page, totalPages])
-
-  const fetchPage = useCallback(async (p: number) => {
-    const id = postIdRef.current
-    if (!id) return
-    if (inFlightRef.current) return
-
-    inFlightRef.current = true
-    setError(null)
-
-    const first = p === 1
-    if (first) setLoading(true)
-    else setLoadingMore(true)
-
-    try {
-      const qs = new URLSearchParams({
-        page: String(p),
-        maxPageSize: "10",
-      })
-
-      const res = await apiFetch(`${API_URL}/post/${id}/comments?${qs}`, {
-        method: "GET",
-        cache: "no-store",
-      })
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => "")
-        throw new Error(text || `Request failed (${res.status})`)
-      }
-
-      const json = (await res.json().catch(() => ({}))) as CommentsResponse
-      const newItems = Array.isArray(json?.data) ? json.data : []
-      const tp = typeof json?.totalPages === "number" ? json.totalPages : null
-
-      setTotalPages(tp)
-      setItems((prev) => (first ? newItems : [...prev, ...newItems]))
-      setPage(p)
-    } catch (e: any) {
-      setError(e?.message || "Failed to load comments")
-    } finally {
-      inFlightRef.current = false
-      setLoading(false)
-      setLoadingMore(false)
+  const res = await apiFetch(
+    `${API_URL}/post/${postId}/comments?${qs.toString()}`,
+    {
+      method: "GET",
+      cache: "no-store",
     }
-  }, [])
+  )
 
-  // only reset + fetch when postId changes
-  useEffect(() => {
-    if (!postId) return
-    setItems([])
-    setPage(1)
-    setTotalPages(null)
-    setError(null)
-    fetchPage(1)
-  }, [postId, fetchPage])
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new Error(text || `Request failed (${res.status})`)
+  }
+
+  return (await res.json().catch(() => ({}))) as CommentsResponse
+}
+
+export function usePostComments(postId: string | undefined) {
+  const q = useInfiniteQuery({
+    queryKey: ["postComments", postId],
+    enabled: !!postId,
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
+      fetchCommentsPage(String(postId), Number(pageParam)),
+    getNextPageParam: (lastPage) => {
+      const page = lastPage?.page ?? 1
+      const totalPages = lastPage?.totalPages
+      if (!totalPages) return page + 1 // if API doesn’t send totalPages, keep trying
+      return page < totalPages ? page + 1 : undefined
+    },
+  })
+
+  const items = useMemo(() => {
+    const pages = q.data?.pages ?? []
+    return pages.flatMap((p) => (Array.isArray(p?.data) ? p.data : []))
+  }, [q.data])
 
   const loadMore = useCallback(() => {
-    if (!hasMore) return
-    fetchPage(page + 1)
-  }, [hasMore, fetchPage, page])
+    if (q.hasNextPage && !q.isFetchingNextPage) q.fetchNextPage()
+  }, [q])
 
   const reload = useCallback(() => {
-    fetchPage(1)
-  }, [fetchPage])
+    q.refetch()
+  }, [q])
 
-  return { items, loading, loadingMore, error, hasMore, loadMore, reload }
+  return {
+    items,
+    loading: q.isLoading,
+    loadingMore: q.isFetchingNextPage,
+    error: q.error ? (q.error as any).message : null,
+    hasMore: !!q.hasNextPage,
+    loadMore,
+    reload,
+  }
 }

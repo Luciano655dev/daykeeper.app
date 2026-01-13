@@ -1,4 +1,3 @@
-// /components/User/ProfileDaySections.tsx
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -51,7 +50,6 @@ export default function ProfileDaySections({ username, className }: Props) {
       const qs = new URLSearchParams(searchParams.toString())
       qs.set("date", toDDMMYYYY(next))
 
-      // ✅ IMPORTANT: include pathname so Next actually updates URL in nested routes
       router.replace(`${pathname}?${qs.toString()}`, { scroll: false })
     },
     [router, pathname, searchParams]
