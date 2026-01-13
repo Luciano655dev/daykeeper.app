@@ -12,7 +12,7 @@ import { API_URL } from "@/config"
 
 type UserInfo = {
   _id: string
-  name: string
+  username: string
   profile_picture?: { url?: string } | null
   timeZone?: string | null
 }
@@ -55,7 +55,7 @@ export default function PostPage() {
         const normalizedUser: UserInfo | null = ui?._id
           ? {
               _id: String(ui._id),
-              name: String(ui.name || ""),
+              username: String(ui.username || ""),
               profile_picture: ui.profile_picture ?? null,
               timeZone: ui.timeZone ?? null,
             }

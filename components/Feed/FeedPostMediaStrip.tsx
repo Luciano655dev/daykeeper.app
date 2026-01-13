@@ -62,7 +62,7 @@ export default function FeedPostMediaStrip({ media }: { media?: FeedMedia[] }) {
             ) : (
               <Image
                 src={m.url}
-                alt={m.name || "Post media"}
+                alt={m.title || "Post media"}
                 fill
                 className="object-cover"
                 sizes="(max-width: 640px) 288px, 320px"

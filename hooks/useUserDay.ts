@@ -29,32 +29,32 @@ function safeApiMessage(err: any) {
   }
 }
 
-export function useUserDay(name: string, dateParam: string) {
+export function useUserDay(username: string, dateParam: string) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const [day, setDay] = useState<DayResponse | null>(null)
   const [posts, setPosts] = useState<any[]>([])
 
-  const key = useMemo(() => `${name}::${dateParam}`, [name, dateParam])
+  const key = useMemo(() => `${username}::${dateParam}`, [username, dateParam])
 
   const reload = useCallback(async () => {
-    if (!name || !dateParam) return
+    if (!username || !dateParam) return
     setLoading(true)
     setError(null)
 
     try {
       const [dayRes, postsRes] = await Promise.all([
         apiFetch(
-          `${API_URL}/day/${encodeURIComponent(name)}?date=${encodeURIComponent(
-            dateParam
-          )}`,
+          `${API_URL}/day/${encodeURIComponent(
+            username
+          )}?date=${encodeURIComponent(dateParam)}`,
           { method: "GET", cache: "no-store" }
         ),
         apiFetch(
-          `${API_URL}/${encodeURIComponent(name)}/posts/${encodeURIComponent(
-            dateParam
-          )}`,
+          `${API_URL}/${encodeURIComponent(
+            username
+          )}/posts/${encodeURIComponent(dateParam)}`,
           { method: "GET", cache: "no-store" }
         ),
       ])

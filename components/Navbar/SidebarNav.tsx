@@ -68,7 +68,7 @@ export default function SidebarNav() {
 
           {me &&
             (() => {
-              const profileHref = `/${me.name}`
+              const profileHref = `/${me.username}`
               const isActive =
                 pathname === profileHref ||
                 pathname.startsWith(profileHref + "/")

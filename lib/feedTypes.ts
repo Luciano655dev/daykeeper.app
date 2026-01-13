@@ -1,6 +1,6 @@
 export type FeedUserDay = {
   userId: string
-  userName: string
+  username: string
   userHandle: string
   profile_picture?: { url?: string } | null
   posts: FeedPost[]
@@ -10,7 +10,7 @@ export type FeedMedia = {
   _id: string
   type: "image" | "video" | string
   url: string
-  name?: string
+  title?: string
 }
 
 export type FeedPost = {
@@ -42,9 +42,9 @@ export function normalizeFeedPayload(json: any): FeedUserDay[] {
     tasksCount: u.tasksCount,
     lastPostTime: u.lastPostTime,
     userId: String(u.userId ?? u._id ?? ""),
-    userName: String(u.userName ?? u.user?.name ?? u.name ?? ""),
+    username: String(u.username ?? u.user?.username ?? u.username ?? ""),
     userHandle: String(
-      u.userHandle ?? u.handle ?? u.username ?? u.userName ?? ""
+      u.userHandle ?? u.handle ?? u.username ?? u.username ?? ""
     ),
     profile_picture: u.profile_picture ?? u.user?.profile_picture ?? null,
     posts: Array.isArray(u.posts)

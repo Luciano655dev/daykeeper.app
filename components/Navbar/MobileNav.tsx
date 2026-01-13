@@ -20,7 +20,7 @@ export default function MobileNav() {
     { href: "/search", icon: Search },
     { href: "/create", icon: PlusSquare, isCreate: true },
     { href: "/notifications", icon: Bell },
-    ...(me ? [{ href: `/${me.name}`, icon: User, isProfile: true }] : []),
+    ...(me ? [{ href: `/${me.username}`, icon: User, isProfile: true }] : []),
   ]
 
   return (

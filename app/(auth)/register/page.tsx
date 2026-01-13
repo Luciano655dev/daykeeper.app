@@ -20,7 +20,7 @@ import FormAlert from "@/components/Form/FormAlert"
 export default function RegisterPage() {
   const router = useRouter()
 
-  const [name, setName] = useState("")
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -30,13 +30,13 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
 
   const canSubmit = useMemo(() => {
-    if (!name.trim()) return false
+    if (!username.trim()) return false
     if (!email.trim()) return false
     if (!password) return false
     if (password !== confirmPassword) return false
     if (!agree) return false
     return true
-  }, [name, email, password, confirmPassword, agree])
+  }, [username, email, password, confirmPassword, agree])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -51,7 +51,7 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          name: name.trim(),
+          username: username.trim(),
           email: email.trim().toLowerCase(),
           password,
         }),
@@ -90,8 +90,8 @@ export default function RegisterPage() {
               type: "text",
               autoComplete: "name",
               placeholder: "Your name",
-              value: name,
-              onChange: (e: any) => setName(e.target.value),
+              value: username,
+              onChange: (e: any) => setUsername(e.target.value),
             }}
           />
 

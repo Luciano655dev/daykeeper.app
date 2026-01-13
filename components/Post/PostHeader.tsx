@@ -4,7 +4,7 @@ import Image from "next/image"
 
 type UserInfo = {
   _id: string
-  name: string
+  username: string
   profile_picture?: { url?: string } | null
 }
 
@@ -18,14 +18,14 @@ export default function PostHeader({ user }: { user: UserInfo }) {
       <div className="flex items-start gap-4">
         <Image
           src={avatarSrc}
-          alt={user?.name || "User"}
+          alt={user?.username || "User"}
           width={48}
           height={48}
           className="h-12 w-12 rounded-sm object-cover"
         />
         <div className="flex-1 pt-1">
-          <h3 className="font-bold text-(--dk-ink)">{user?.name}</h3>
-          <p className="text-sm text-(--dk-slate)">@{user?.name}</p>
+          <h3 className="font-bold text-(--dk-ink)">{user?.username}</h3>
+          <p className="text-sm text-(--dk-slate)">@{user?.username}</p>
         </div>
       </div>
     </div>

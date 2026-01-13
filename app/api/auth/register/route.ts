@@ -4,13 +4,13 @@ import { API_URL } from "@/config"
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null)
 
-  const name = (body?.name as string | undefined)?.trim()
+  const username = (body?.username as string | undefined)?.trim()
   const email = (body?.email as string | undefined)?.trim()
   const password = body?.password as string | undefined
 
-  if (!name || !email || !password) {
+  if (!username || !email || !password) {
     return NextResponse.json(
-      { error: "Missing name, email, or password" },
+      { error: "Missing username, email, or password" },
       { status: 400 }
     )
   }
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify({ username, email, password }),
   })
 
   const data = await res.json().catch(() => null)
@@ -31,9 +31,6 @@ export async function POST(req: Request) {
       { status: res.status }
     )
   }
-
-  // If your Node also returns refreshToken, you can set it here (optional)
-  // if (data?.refreshToken) { ... set cookie ... }
 
   return NextResponse.json(
     { ok: true, email, user: data?.user ?? null },

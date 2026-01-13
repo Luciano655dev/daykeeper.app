@@ -52,10 +52,6 @@ export default function FeedHeader({
   selectedDate,
   onChangeDate,
   isToday,
-  loading,
-  error,
-  usersCount,
-  onRetry,
   onSelectDate,
 }: Props) {
   const [open, setOpen] = useState(false)
@@ -102,8 +98,6 @@ export default function FeedHeader({
 
   return (
     <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md border-b border-(--dk-ink)/10 z-10">
-      <div className="h-1 w-full bg-(--dk-sky)/70" />
-
       <div className="px-4 py-4">
         <div className="flex items-center justify-between gap-3">
           <button
@@ -184,23 +178,6 @@ export default function FeedHeader({
           >
             <ChevronRight size={20} className="text-(--dk-slate)" />
           </button>
-        </div>
-
-        <div className="mt-3 flex items-center justify-center gap-3">
-          {loading ? (
-            <span className="text-xs text-(--dk-slate)">Loading…</span>
-          ) : error ? (
-            <button
-              onClick={onRetry}
-              className="text-xs underline text-(--dk-slate) hover:text-(--dk-ink)"
-            >
-              Failed to load. Click to retry.
-            </button>
-          ) : (
-            <span className="text-xs text-(--dk-slate)">
-              {usersCount} users posted
-            </span>
-          )}
         </div>
       </div>
     </div>

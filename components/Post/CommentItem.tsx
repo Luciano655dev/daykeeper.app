@@ -22,14 +22,14 @@ function formatRelative(dateStr: string) {
 
 export default function CommentItem({ c }: { c: PostComment }) {
   const avatar = c.user?.profile_picture?.url || AVATAR_FALLBACK
-  const handle = c.user?.name ? `@${c.user.name}` : ""
+  const handle = c.user?.username ? `@${c.user.username}` : ""
 
   return (
     <div className="px-4 py-4 border-b border-(--dk-ink)/10">
       <div className="flex items-start gap-3">
         <Image
           src={avatar}
-          alt={c.user?.name || "User"}
+          alt={c.user?.username || "User"}
           width={36}
           height={36}
           className="h-9 w-9 rounded-md object-cover"
@@ -38,7 +38,7 @@ export default function CommentItem({ c }: { c: PostComment }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 min-w-0">
             <span className="font-semibold text-(--dk-ink) truncate">
-              {c.user?.name}
+              {c.user?.username}
             </span>
             <span className="text-sm text-(--dk-slate) truncate">{handle}</span>
             <span className="text-sm text-(--dk-slate)">·</span>

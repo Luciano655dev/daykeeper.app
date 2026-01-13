@@ -7,12 +7,13 @@ import FeedPostMediaStrip from "@/components/Feed/FeedPostMediaStrip"
 import { apiFetch } from "@/lib/authClient"
 import type { FeedPost } from "@/lib/feedTypes"
 import { API_URL } from "@/config"
+import { useRouter } from "next/navigation"
 
 const AVATAR_FALLBACK = "/avatar-placeholder.png"
 
 type UserInfo = {
   _id: string
-  name: string
+  username: string
   profile_picture?: { url?: string } | null
   timeZone?: string | null
 }
@@ -64,6 +65,7 @@ function formatTwitterStamp(dateStr?: string, timeZone?: string | null) {
 }
 
 export default function PostDetailCard({ post, user, postedAt }: Props) {
+  const router = useRouter()
   // optimistic like state
   const [liked, setLiked] = useState(!!post.userLiked)
   const [likesCount, setLikesCount] = useState<number>(post.likes ?? 0)
@@ -117,25 +119,28 @@ export default function PostDetailCard({ post, user, postedAt }: Props) {
   }
 
   const avatarSrc = user?.profile_picture?.url || AVATAR_FALLBACK
-  const handle = user?.name ? `@${user.name}` : ""
+  const handle = user?.username ? `@${user.username}` : ""
 
   return (
     <article className="bg-(--dk-paper) border-b border-(--dk-ink)/10">
       <div className="px-4 pt-4 pb-2">
         {/* user row */}
-        <div className="flex items-start gap-3">
+        <div
+          className="flex items-start gap-3 cursor-pointer"
+          onClick={() => router.push(`/${user?.username}`)}
+        >
           <Image
             src={avatarSrc}
-            alt={user?.name || "User"}
+            alt={user?.username || "User"}
             width={44}
             height={44}
-            className="h-11 w-11 rounded-md object-cover"
+            className="h-11 w-11 rounded-sm object-cover"
           />
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <p className="font-semibold text-(--dk-ink) truncate">
-                {user?.name}
+                {user?.username}
               </p>
               <p className="text-sm text-(--dk-slate) truncate">{handle}</p>
             </div>

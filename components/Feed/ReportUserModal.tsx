@@ -6,7 +6,7 @@ import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
 type Props = {
-  name: string
+  username: string
   open: boolean
   onClose: () => void
 }
@@ -19,7 +19,7 @@ function safeApiMessage(err: any) {
   }
 }
 
-export default function ReportUserModal({ name, open, onClose }: Props) {
+export default function ReportUserModal({ username, open, onClose }: Props) {
   const [reason, setReason] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +49,7 @@ export default function ReportUserModal({ name, open, onClose }: Props) {
 
     try {
       const res = await apiFetch(
-        `${API_URL}/${encodeURIComponent(name)}/report`,
+        `${API_URL}/${encodeURIComponent(username)}/report`,
         {
           method: "POST",
           cache: "no-store",
@@ -103,8 +103,8 @@ export default function ReportUserModal({ name, open, onClose }: Props) {
 
               <p className="text-sm text-(--dk-slate) mb-3">
                 Reporting{" "}
-                <span className="font-medium text-(--dk-ink)">@{name}</span>.
-                Reason (optional):
+                <span className="font-medium text-(--dk-ink)">@{username}</span>
+                . Reason (optional):
               </p>
 
               <textarea

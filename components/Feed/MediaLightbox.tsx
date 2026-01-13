@@ -168,7 +168,7 @@ export default function MediaLightbox({
               ) : (
                 <Image
                   src={item.url}
-                  alt={item.name || "Media"}
+                  alt={item.title || "Media"}
                   fill
                   className="object-contain"
                   sizes="(max-width: 768px) 100vw, 1000px"

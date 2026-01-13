@@ -37,7 +37,7 @@ export default function LoginPage() {
     setError(null)
     setLoading(true)
 
-    const cleanEmail = email.trim() // not lowercase since it can also be username
+    const cleanEmail = email.trim().toLowerCase()
 
     try {
       const res = await fetch("/api/auth/login", {

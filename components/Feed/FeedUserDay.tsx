@@ -7,6 +7,7 @@ import FeedUserDayCard from "./FeedUserDayCard"
 import { MoreHorizontal, Flag, Ban } from "lucide-react"
 import ReportUserModal from "./ReportUserModal"
 import BlockUserModal from "./BlockUserModal"
+import { useRouter } from "next/navigation"
 
 const AVATAR_FALLBACK = "/avatar-placeholder.png"
 
@@ -17,8 +18,9 @@ export default function FeedUserDay({
   userDay: any
   selectedDate: any
 }) {
+  const router = useRouter()
   const avatarSrc = userDay.user_info.profile_picture?.url || AVATAR_FALLBACK
-  const name = userDay.user_info.name
+  const username = userDay.user_info.username
 
   const sortedPosts = useMemo(() => {
     const list = [...userDay.posts]
@@ -55,10 +57,13 @@ export default function FeedUserDay({
 
   return (
     <div className="relative">
-      <div className="flex items-start gap-4 px-4 mb-2">
+      <div
+        className="flex items-start gap-4 px-4 mb-2 cursor-pointer"
+        onClick={() => router.push(`/${username}`)}
+      >
         <Image
           src={avatarSrc}
-          alt={name}
+          alt={username}
           width={48}
           height={48}
           className="h-12 w-12 rounded-sm object-cover"
@@ -68,14 +73,16 @@ export default function FeedUserDay({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2 min-w-0">
-                <h3 className="font-bold text-(--dk-ink) truncate">{name}</h3>
+                <h3 className="font-bold text-(--dk-ink) truncate">
+                  {username}
+                </h3>
                 <span className="text-[11px] px-2 py-0.5 rounded-full border border-(--dk-ink)/10 bg-(--dk-mist)/70 text-(--dk-slate)">
                   {userDay.user_info.currentStreak || 0} Days
                 </span>
               </div>
 
               <p className="text-sm text-(--dk-slate) truncate">
-                @{name} · last update 2h ago
+                @{username} · last update 2h ago
               </p>
             </div>
 
@@ -162,13 +169,13 @@ export default function FeedUserDay({
 
       {/* modals */}
       <ReportUserModal
-        name={String(name)}
+        username={String(username)}
         open={reportOpen}
         onClose={() => setReportOpen(false)}
       />
 
       <BlockUserModal
-        name={String(name)}
+        username={String(username)}
         open={blockOpen}
         onClose={() => setBlockOpen(false)}
       />

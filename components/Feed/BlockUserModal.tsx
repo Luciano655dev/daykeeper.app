@@ -6,7 +6,7 @@ import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
 type Props = {
-  name: string
+  username: string
   open: boolean
   onClose: () => void
 }
@@ -19,7 +19,7 @@ function safeApiMessage(err: any) {
   }
 }
 
-export default function BlockUserModal({ name, open, onClose }: Props) {
+export default function BlockUserModal({ username, open, onClose }: Props) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successOpen, setSuccessOpen] = useState(false)
@@ -45,7 +45,7 @@ export default function BlockUserModal({ name, open, onClose }: Props) {
 
     try {
       const res = await apiFetch(
-        `${API_URL}/${encodeURIComponent(name)}/block`,
+        `${API_URL}/${encodeURIComponent(username)}/block`,
         {
           method: "POST",
           cache: "no-store",
@@ -97,7 +97,8 @@ export default function BlockUserModal({ name, open, onClose }: Props) {
 
               <p className="text-sm text-(--dk-slate)">
                 Block{" "}
-                <span className="font-medium text-(--dk-ink)">@{name}</span>?
+                <span className="font-medium text-(--dk-ink)">@{username}</span>
+                ?
                 <br />
                 You won’t see their posts anymore, and they won’t be able to
                 interact with you.
@@ -149,7 +150,7 @@ export default function BlockUserModal({ name, open, onClose }: Props) {
               </div>
 
               <p className="text-sm text-(--dk-slate)">
-                @{name} was blocked successfully.
+                @{username} was blocked successfully.
               </p>
 
               <div className="mt-4 flex justify-end">

@@ -7,7 +7,7 @@ import { API_URL } from "@/config"
 export type PostComment = {
   user: {
     _id: string
-    name: string
+    username: string
     profile_picture?: { url?: string } | null
     timeZone?: string | null
   }

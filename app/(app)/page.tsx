@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
-import RightPanel from "@/components/Feed/RightPanel"
 import FeedHeader from "@/components/Feed/FeedHeader"
 import FeedTimeline from "@/components/Feed/FeedTimeline"
 import { useFeed } from "@/hooks/useFeed"
@@ -15,7 +14,6 @@ export default function FeedPage() {
   const searchParams = useSearchParams()
   const urlDateParam = searchParams.get("date")
 
-  // ✅ IMPORTANT: read the real URL on first load / refresh
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search)
@@ -87,7 +85,6 @@ export default function FeedPage() {
 
   return (
     <>
-      <RightPanel />
       <main className="pb-20 lg:pb-0">
         <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
           <FeedHeader

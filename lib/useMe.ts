@@ -6,7 +6,6 @@ import { apiFetch } from "@/lib/authClient"
 type Me = {
   _id: string
   username: string
-  name: string
 }
 
 export function useMe() {

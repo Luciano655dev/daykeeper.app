@@ -25,7 +25,7 @@ export default function FeedUserDayCard({ userDay, selectedDate }: any) {
     // example: /day/2026-01-07?user=USER_ID
     router.push(`/day/2026-01-07?user=${userDay.user_info._id}`)
     router.push(
-      `/day/${userDay.user_info.name}?date=${toDayParam(selectedDate)}`
+      `/day/${userDay.user_info.username}?date=${toDayParam(selectedDate)}`
     )
   }
   return (

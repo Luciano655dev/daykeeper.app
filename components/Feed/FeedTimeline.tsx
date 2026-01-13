@@ -96,7 +96,6 @@ export default function FeedTimeline({
             ) : null}
           </div>
 
-          {/* ✅ sentinel */}
           <div ref={sentinelRef} className="h-1" />
         </div>
       )}
