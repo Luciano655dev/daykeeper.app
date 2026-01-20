@@ -26,19 +26,19 @@ export default function UserDayNotes({
   loadingMore?: boolean
   onLoadMore?: () => void
 }) {
-  const list = useMemo(() => (Array.isArray(notes) ? notes : []), [notes])
-  if (!list.length)
-    return <div className="text-sm text-(--dk-slate)">No notes.</div>
-
   const PREVIEW_COUNT = 5
 
-  // UI-only collapse state:
-  // collapsed = show only first 3
+  const list = useMemo(() => (Array.isArray(notes) ? notes : []), [notes])
+
+  // UI-only collapse state (MUST be before any return)
   const [collapsed, setCollapsed] = useState(true)
+
+  if (!list.length) {
+    return <div className="text-sm text-(--dk-slate)">No notes.</div>
+  }
 
   const visible = collapsed ? list.slice(0, PREVIEW_COUNT) : list
 
-  // these keep your existing "Load more (remaining)" behavior
   const totalCount = pagination?.totalCount ?? list.length
   const remaining = Math.max(0, totalCount - list.length)
 
@@ -46,7 +46,6 @@ export default function UserDayNotes({
 
   return (
     <div className="space-y-2">
-      {/* collapse (UI-only). shows after you've expanded / have enough items */}
       {canCollapse ? (
         <div className="flex justify-end">
           <button
@@ -79,12 +78,10 @@ export default function UserDayNotes({
         ))}
       </div>
 
-      {/* load more (same label). Clicking load more should auto-expand */}
       {hasMore && onLoadMore ? (
         <ActionPill
           onClick={() => {
             if (loadingMore) return
-            // IMPORTANT: "Load more" should obviously uncollapse
             setCollapsed(false)
             onLoadMore()
           }}

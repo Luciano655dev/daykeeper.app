@@ -6,18 +6,23 @@ import { ArrowLeft } from "lucide-react"
 import PostDetailCard from "@/components/Post/PostDetailCard"
 import CommentsSection from "@/components/Post/CommentsSection"
 import { usePostDetail } from "@/hooks/usePostDetail"
+import { useMe } from "@/lib/useMe"
 
 export default function PostPage() {
   const { postId } = useParams<{ postId: string }>()
   const router = useRouter()
 
   const q = usePostDetail(postId)
+  const me = useMe()
 
   const loading = q.isLoading
   const error = q.error ? (q.error as any).message : null
   const post = q.data?.post ?? null
   const user = q.data?.user ?? null
   const postedAt = q.data?.postedAt ?? ""
+
+  const isOwner =
+    !!me?._id && !!user?._id && String(me._id) === String(user._id)
 
   return (
     <main className="pb-20 lg:pb-0">
@@ -50,7 +55,12 @@ export default function PostPage() {
 
         {!loading && !error && post && user && (
           <>
-            <PostDetailCard post={post} user={user} postedAt={postedAt} />
+            <PostDetailCard
+              post={post}
+              user={user}
+              postedAt={postedAt}
+              isOwner={isOwner}
+            />
             <CommentsSection postId={post.id} />
           </>
         )}

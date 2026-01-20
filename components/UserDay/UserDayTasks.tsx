@@ -54,14 +54,16 @@ export default function UserDayTasks({
   loadingMore?: boolean
   onLoadMore?: () => void
 }) {
-  const list = useMemo(() => (Array.isArray(tasks) ? tasks : []), [tasks])
-  if (!list.length)
-    return <div className="text-sm text-(--dk-slate)">No tasks.</div>
-
   const PREVIEW_COUNT = 5
 
-  // UI-only collapse state
+  const list = useMemo(() => (Array.isArray(tasks) ? tasks : []), [tasks])
+
+  // UI-only collapse state (MUST be before any return)
   const [collapsed, setCollapsed] = useState(true)
+
+  if (!list.length) {
+    return <div className="text-sm text-(--dk-slate)">No tasks.</div>
+  }
 
   const visible = collapsed ? list.slice(0, PREVIEW_COUNT) : list
 
@@ -124,7 +126,6 @@ export default function UserDayTasks({
         <ActionPill
           onClick={() => {
             if (loadingMore) return
-            // IMPORTANT: "Load more" should uncollapse
             setCollapsed(false)
             onLoadMore()
           }}

@@ -5,7 +5,7 @@ import { Lock, Users } from "lucide-react"
 export default function PrivacyChip({
   privacy,
 }: {
-  privacy?: String // "public" | "private" | "close_friends"
+  privacy?: String // "public" | "private" | "close friends"
 }) {
   if (!privacy || privacy === "public") return null
 

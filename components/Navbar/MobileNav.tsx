@@ -18,7 +18,7 @@ export default function MobileNav() {
   const NAV = [
     { href: "/", icon: Home },
     { href: "/search", icon: Search },
-    { href: "/create", icon: PlusSquare, isCreate: true },
+    { href: "/post/create", icon: PlusSquare, isCreate: true },
     { href: "/notifications", icon: Bell },
     ...(me ? [{ href: `/${me.username}`, icon: User, isProfile: true }] : []),
   ]

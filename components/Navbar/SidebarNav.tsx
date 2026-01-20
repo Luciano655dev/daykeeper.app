@@ -101,7 +101,7 @@ export default function SidebarNav() {
         {/* Create button */}
         <div className="px-3 py-2">
           <Link
-            href="/create"
+            href="/post/create"
             className="w-full bg-(--dk-sky) text-white py-3.5 rounded-xl flex justify-center gap-2"
           >
             <PlusSquare size={20} />

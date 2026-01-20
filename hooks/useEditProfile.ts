@@ -276,10 +276,12 @@ export function useEditProfile() {
         hasUpdates || avatarResetQueued ? "Saved!" : "Nothing changed."
       )
 
+      // reset some caches
       qc.invalidateQueries({ queryKey: ["me"] })
       qc.invalidateQueries({ queryKey: ["userProfile"] })
       qc.invalidateQueries({ queryKey: ["feed"] })
       qc.invalidateQueries({ queryKey: ["userDay"] })
+      qc.invalidateQueries({ queryKey: ["postDetail"] })
 
       router.push(`/${username}`)
     } catch (e: any) {

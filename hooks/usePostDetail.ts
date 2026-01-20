@@ -14,24 +14,44 @@ type UserInfo = {
 
 type PostDetailResult = {
   post: FeedPost
-  user: UserInfo
+  user: UserInfo // post owner
   postedAt: string
+  isOwner: boolean // NEW
+}
+
+async function fetchMe(): Promise<{ _id: string } | null> {
+  try {
+    const res = await apiFetch(`${API_URL}/auth/user`, {
+      method: "GET",
+      cache: "no-store",
+    })
+    if (!res.ok) return null
+    const json = await res.json().catch(() => ({}))
+    const me = json?.data || json
+    if (!me?._id) return null
+    return { _id: String(me._id) }
+  } catch {
+    return null
+  }
 }
 
 async function fetchPostDetail(postId: string): Promise<PostDetailResult> {
-  const res = await apiFetch(`${API_URL}/post/${encodeURIComponent(postId)}`, {
-    method: "GET",
-    cache: "no-store",
-  })
+  const [me, postRes] = await Promise.all([
+    fetchMe(),
+    apiFetch(`${API_URL}/post/${encodeURIComponent(postId)}`, {
+      method: "GET",
+      cache: "no-store",
+    }),
+  ])
 
-  if (res.status === 404) throw new Error("Post not found")
+  if (postRes.status === 404) throw new Error("Post not found")
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "")
-    throw new Error(text || `Request failed (${res.status})`)
+  if (!postRes.ok) {
+    const text = await postRes.text().catch(() => "")
+    throw new Error(text || `Request failed (${postRes.status})`)
   }
 
-  const json = await res.json().catch(() => ({}))
+  const json = await postRes.json().catch(() => ({}))
   const raw = json?.data
   if (!raw?._id) throw new Error("Post not found")
 
@@ -56,7 +76,9 @@ async function fetchPostDetail(postId: string): Promise<PostDetailResult> {
     userCommented: raw.userCommented ?? false,
   }
 
-  return { post, user, postedAt: String(raw.date || "") }
+  const isOwner = !!me?._id && me._id === user._id
+
+  return { post, user, postedAt: String(raw.date || ""), isOwner }
 }
 
 export function usePostDetail(postId: string | undefined) {
