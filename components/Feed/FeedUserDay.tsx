@@ -22,6 +22,7 @@ export default function FeedUserDay({
   const router = useRouter()
   const avatarSrc = userDay.user_info.profile_picture?.url || AVATAR_FALLBACK
   const username = userDay.user_info.username
+  const displayName = userDay?.user_info?.displayName
 
   const sortedPosts = useMemo(() => {
     const list = [...(userDay.posts || [])]
@@ -30,7 +31,6 @@ export default function FeedUserDay({
     )
   }, [userDay.posts])
 
-  // ✅ total posts count from API (fallbacks just in case)
   const postCount = Number(
     userDay.postCount ??
       userDay.postsCount ??
@@ -86,7 +86,7 @@ export default function FeedUserDay({
             <div className="min-w-0">
               <div className="flex items-center gap-2 min-w-0">
                 <h3 className="font-bold text-(--dk-ink) truncate">
-                  {username}
+                  {displayName}
                 </h3>
                 <span className="text-[11px] px-2 py-0.5 rounded-full border border-(--dk-ink)/10 bg-(--dk-mist)/70 text-(--dk-slate)">
                   {userDay.user_info.currentStreak || 0} Days

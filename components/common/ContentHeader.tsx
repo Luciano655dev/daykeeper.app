@@ -92,12 +92,12 @@ export default function ContentHeader({
                 {stamp}
               </span>
             ) : null}
-            {editedDate && (
+            {editedDate ? (
               <span className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate)">
                 <Pencil size={14} className="text-(--dk-slate)" />
                 <span>{editedDate}</span>
               </span>
-            )}
+            ) : null}
 
             {privacy ? <PrivacyChip privacy={privacy as any} /> : null}
 

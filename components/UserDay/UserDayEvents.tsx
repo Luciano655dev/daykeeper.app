@@ -12,6 +12,7 @@ import UserDayListRow from "./UserDayListRow"
 import PrivacyChip from "@/components/common/PrivacyChip"
 import ActionPill from "../common/ActionPill"
 import type { PaginationMeta } from "@/hooks/useUserDay"
+import { useRouter } from "next/navigation"
 
 function pad2(n: number) {
   return String(n).padStart(2, "0")
@@ -74,6 +75,7 @@ export default function UserDayEvents({
 }) {
   const PREVIEW_COUNT = 5
 
+  const router = useRouter()
   const list = useMemo(() => (Array.isArray(events) ? events : []), [events])
 
   // UI-only collapse state (MUST be before any return)
@@ -110,7 +112,7 @@ export default function UserDayEvents({
         {visible.map((ev: any) => {
           const { startText, endText } = formatEventTimeRange(
             ev.dateStartLocal || ev.dateStart,
-            ev.dateEndLocal || ev.dateEnd
+            ev.dateEndLocal || ev.dateEnd,
           )
 
           const createdISO =
@@ -121,6 +123,7 @@ export default function UserDayEvents({
               key={ev._id}
               leftIcon={<CalendarDays size={18} />}
               title={ev.title}
+              onClick={() => router.push(`/day/events/${ev._id}`)}
               metaTop={
                 <div className="flex items-center gap-2 flex-wrap min-w-0">
                   <span className="inline-flex items-center gap-1.5 text-xs text-(--dk-slate) shrink-0">
