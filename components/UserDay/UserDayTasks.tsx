@@ -12,7 +12,14 @@ import {
 import UserDayListRow from "./UserDayListRow"
 import PrivacyChip from "@/components/common/PrivacyChip"
 import ActionPill from "../common/ActionPill"
+import { useRouter } from "next/navigation"
 import type { PaginationMeta } from "@/hooks/useUserDay"
+import { apiFetch } from "@/lib/authClient"
+import { API_URL } from "@/config"
+import { useQueryClient } from "@tanstack/react-query"
+import { useMe } from "@/lib/useMe"
+
+type ApiOk<T> = { message?: string; data?: T }
 
 function formatTime(s?: string) {
   if (!s) return ""
@@ -20,24 +27,84 @@ function formatTime(s?: string) {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
 }
 
-function TaskStatusPill({ done }: { done: boolean }) {
+function safeApiMessage(err: any) {
+  try {
+    const parsed = JSON.parse(err?.message)
+    const msg = parsed?.message
+    if (typeof msg === "string") return msg
+    if (msg && typeof msg === "object") {
+      if (typeof msg.message === "string") return msg.message
+      return JSON.stringify(msg)
+    }
+    return "Something went wrong."
+  } catch {
+    return err?.message ? String(err.message) : "Something went wrong."
+  }
+}
+
+async function readJsonSafe<T>(res: Response): Promise<T | null> {
+  try {
+    return (await res.json()) as T
+  } catch {
+    return null
+  }
+}
+
+function TaskStatusPill({
+  done,
+  clickable,
+  busy,
+  onToggle,
+}: {
+  done: boolean
+  clickable?: boolean
+  busy?: boolean
+  onToggle?: () => void
+}) {
   const Icon = done ? CheckSquare2 : Square
 
   return (
-    <div
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (!clickable || busy) return
+        onToggle?.()
+      }}
+      disabled={!clickable || busy}
       className={[
         "inline-flex items-center justify-center",
         "h-9 w-9 rounded-xl border",
         "transition",
+        clickable ? "cursor-pointer" : "cursor-default",
         done
           ? "bg-(--dk-sky)/10 border-(--dk-sky)/25 text-(--dk-sky)"
-          : "bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate) hover:bg-(--dk-mist)/60",
+          : "bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate)",
+        clickable && !done
+          ? "hover:bg-(--dk-mist)/60"
+          : clickable && done
+            ? "hover:bg-(--dk-sky)/15"
+            : "",
+        busy ? "opacity-70" : "",
       ].join(" ")}
       aria-label={done ? "Task completed" : "Task not completed"}
-      title={done ? "Completed" : "Not completed"}
+      title={
+        clickable
+          ? done
+            ? "Mark as not completed"
+            : "Mark as completed"
+          : done
+            ? "Completed"
+            : "Not completed"
+      }
     >
-      <Icon size={18} />
-    </div>
+      {busy ? (
+        <Loader2 size={18} className="animate-spin" />
+      ) : (
+        <Icon size={18} />
+      )}
+    </button>
   )
 }
 
@@ -56,10 +123,18 @@ export default function UserDayTasks({
 }) {
   const PREVIEW_COUNT = 5
 
+  const router = useRouter()
+  const qc = useQueryClient()
+  const me = useMe()
+
   const list = useMemo(() => (Array.isArray(tasks) ? tasks : []), [tasks])
 
   // UI-only collapse state (MUST be before any return)
   const [collapsed, setCollapsed] = useState(true)
+
+  // per-task busy/error
+  const [busyMap, setBusyMap] = useState<Record<string, boolean>>({})
+  const [errMap, setErrMap] = useState<Record<string, string | null>>({})
 
   if (!list.length) {
     return <div className="text-sm text-(--dk-slate)">No tasks.</div>
@@ -72,9 +147,107 @@ export default function UserDayTasks({
 
   const canCollapse = list.length > PREVIEW_COUNT && !collapsed
 
+  async function toggleTaskCompleted(task: any) {
+    const id = String(task?._id || "")
+    if (!id) return
+
+    const isOwner =
+      !!me?._id && !!task?.user && String(me._id) === String(task.user)
+
+    if (!isOwner) return
+    if (busyMap[id]) return
+
+    const prev = !!task.completed
+    const next = !prev
+
+    setBusyMap((m) => ({ ...m, [id]: true }))
+    setErrMap((m) => ({ ...m, [id]: null }))
+
+    // optimistic: update the list we have via userDay cache (best effort)
+    qc.setQueriesData({ queryKey: ["userDay"] }, (old: any) => {
+      if (!old) return old
+      try {
+        const nextOld = structuredClone(old)
+        const data = nextOld?.data ?? nextOld
+
+        if (data?.tasks?.data && Array.isArray(data.tasks.data)) {
+          data.tasks.data = data.tasks.data.map((t: any) =>
+            String(t._id) === id ? { ...t, completed: next } : t,
+          )
+        } else if (Array.isArray(data?.tasks)) {
+          data.tasks = data.tasks.map((t: any) =>
+            String(t._id) === id ? { ...t, completed: next } : t,
+          )
+        }
+
+        return nextOld
+      } catch {
+        return old
+      }
+    })
+
+    // also update task detail cache if it exists
+    qc.setQueryData(["taskDetail", id], (old: any) => {
+      if (!old) return old
+      return { ...old, completed: next }
+    })
+
+    try {
+      const res = await apiFetch(
+        `${API_URL}/day/task/${encodeURIComponent(id)}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ completed: next }),
+          cache: "no-store",
+        },
+      )
+
+      const data = await readJsonSafe<ApiOk<any>>(res)
+
+      if (!res.ok) {
+        const msg = data?.message || "Could not update task."
+        throw new Error(JSON.stringify({ message: msg }))
+      }
+
+      qc.invalidateQueries({ queryKey: ["userDay"] })
+    } catch (err: any) {
+      // rollback
+      qc.setQueriesData({ queryKey: ["userDay"] }, (old: any) => {
+        if (!old) return old
+        try {
+          const nextOld = structuredClone(old)
+          const data = nextOld?.data ?? nextOld
+
+          if (data?.tasks?.data && Array.isArray(data.tasks.data)) {
+            data.tasks.data = data.tasks.data.map((t: any) =>
+              String(t._id) === id ? { ...t, completed: prev } : t,
+            )
+          } else if (Array.isArray(data?.tasks)) {
+            data.tasks = data.tasks.map((t: any) =>
+              String(t._id) === id ? { ...t, completed: prev } : t,
+            )
+          }
+
+          return nextOld
+        } catch {
+          return old
+        }
+      })
+
+      qc.setQueryData(["taskDetail", id], (old: any) => {
+        if (!old) return old
+        return { ...old, completed: prev }
+      })
+
+      setErrMap((m) => ({ ...m, [id]: safeApiMessage(err) }))
+    } finally {
+      setBusyMap((m) => ({ ...m, [id]: false }))
+    }
+  }
+
   return (
     <div className="space-y-2">
-      {/* collapse (UI-only). shows after you've expanded / have enough items */}
       {canCollapse ? (
         <div className="flex justify-end">
           <button
@@ -90,38 +263,58 @@ export default function UserDayTasks({
 
       <div className="space-y-1">
         {visible.map((t: any) => {
+          const id = String(t?._id || "")
           const done = !!t.completed
+
+          const isOwner =
+            !!me?._id && !!t?.user && String(me._id) === String(t.user)
+
+          const rowErr = id ? errMap[id] : null
+          const rowBusy = id ? !!busyMap[id] : false
+
           return (
-            <UserDayListRow
-              key={t._id}
-              showLane
-              leftIcon={<ClipboardList size={22} />}
-              metaTop={
-                <span className="inline-flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5">
-                    <Clock size={12} />
-                    {formatTime(t.dateLocal || t.date)}
+            <div key={id || t._id} className="space-y-1">
+              {rowErr ? (
+                <div className="text-xs text-red-600 px-1">{rowErr}</div>
+              ) : null}
+
+              <UserDayListRow
+                showLane
+                leftIcon={<ClipboardList size={22} />}
+                onClick={() => router.push(`/day/tasks/${t._id}`)}
+                metaTop={
+                  <span className="inline-flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Clock size={12} />
+                      {formatTime(t.dateLocal || t.date)}
+                    </span>
+                    <PrivacyChip privacy={t.privacy} />
                   </span>
-                  <PrivacyChip privacy={t.privacy} />
-                </span>
-              }
-              title={
-                <span
-                  className={[
-                    done ? "opacity-80 line-through" : "",
-                    "transition",
-                  ].join(" ")}
-                >
-                  {t.title}
-                </span>
-              }
-              right={<TaskStatusPill done={done} />}
-            />
+                }
+                title={
+                  <span
+                    className={[
+                      done ? "opacity-80 line-through" : "",
+                      "transition",
+                    ].join(" ")}
+                  >
+                    {t.title}
+                  </span>
+                }
+                right={
+                  <TaskStatusPill
+                    done={done}
+                    clickable={isOwner}
+                    busy={rowBusy}
+                    onToggle={() => toggleTaskCompleted(t)}
+                  />
+                }
+              />
+            </div>
           )
         })}
       </div>
 
-      {/* load more (same label). Clicking load more should auto-expand */}
       {hasMore && onLoadMore ? (
         <ActionPill
           onClick={() => {
