@@ -13,11 +13,11 @@ import {
 import FeedPostMediaStrip from "./FeedPostMediaStrip"
 import { apiFetch } from "@/lib/authClient"
 import { useRouter } from "next/navigation"
-import ReportPostModal from "./ReportPostModal"
 import PrivacyChip from "@/components/common/PrivacyChip"
 import { API_URL } from "@/config"
 import formatDDMMYYYY from "@/utils/formatDate"
 import DeleteEntityModal from "@/components/common/DeleteEntityModal"
+import ReportEntityModal from "@/components/common/ReportEntityModal"
 import { useQueryClient } from "@tanstack/react-query"
 
 type Props = {
@@ -28,6 +28,7 @@ type Props = {
 
 export default function FeedPostItem({ post, isLast }: Props) {
   const isOwner = useMemo(() => post?.isOwner, [post?.isOwner])
+
   const [liked, setLiked] = useState(!!post.userLiked)
   const [likesCount, setLikesCount] = useState<number>(post.likes ?? 0)
   const [likeBusy, setLikeBusy] = useState(false)
@@ -123,7 +124,7 @@ export default function FeedPostItem({ post, isLast }: Props) {
         className="ml-8 bg-(--dk-paper)/70 rounded-xl p-4 hover:bg-(--dk-paper)/90 transition cursor-pointer border border-(--dk-ink)/10"
         onClick={() => router.push(`/post/${post.id}`)}
       >
-        {/* top row with menu (same style as ContentHeader) */}
+        {/* top row with menu */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
             <Clock size={14} className="text-(--dk-slate)" />
@@ -131,12 +132,12 @@ export default function FeedPostItem({ post, isLast }: Props) {
               {post?.time?.toLowerCase() || ""}
             </span>
 
-            {post?.edited_at && (
+            {post?.edited_at ? (
               <span className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate)">
                 <Pencil size={14} className="text-(--dk-slate)" />
                 <span>{formatDDMMYYYY(post.edited_at)}</span>
               </span>
-            )}
+            ) : null}
 
             <PrivacyChip privacy={post.privacy} />
           </div>
@@ -253,11 +254,14 @@ export default function FeedPostItem({ post, isLast }: Props) {
         </div>
       </div>
 
-      {/* report modal */}
-      <ReportPostModal
-        postId={String(postId)}
+      {/* report modal (generic) */}
+      <ReportEntityModal
         open={reportOpen}
         onClose={() => setReportOpen(false)}
+        entityLabel="post"
+        entityId={String(postId)}
+        buildPath={({ id }) => `/post/${encodeURIComponent(id)}/report`}
+        onReported={() => {}}
       />
 
       {/* delete modal */}

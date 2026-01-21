@@ -1,12 +1,12 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { MoreVertical, Ban, Flag, Star } from "lucide-react"
+import { MoreVertical } from "lucide-react"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
 import BlockUserModal from "@/components/common/BlockUserModal"
-import ReportUserModal from "@/components/common/ReportUserModal"
+import ReportEntityModal from "@/components/common/ReportEntityModal"
 
 export default function UserActionsMenu({
   name,
@@ -23,7 +23,7 @@ export default function UserActionsMenu({
   const [busy, setBusy] = useState(false)
 
   const [isInCloseFriends, setIsInCloseFriends] = useState(
-    initialInCloseFriends
+    initialInCloseFriends,
   )
 
   const [reportOpen, setReportOpen] = useState(false)
@@ -64,7 +64,7 @@ export default function UserActionsMenu({
 
   const closeFriendsUrl = useMemo(
     () => `${API_URL}/close_friends/${encodeURIComponent(name)}`,
-    [name]
+    [name],
   )
 
   async function toggleCloseFriends() {
@@ -105,7 +105,7 @@ export default function UserActionsMenu({
         <MoreVertical size={18} className="text-(--dk-slate)" />
       </button>
 
-      {open && (
+      {open ? (
         <div className="absolute right-0 mt-2 w-56 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) shadow-lg overflow-hidden z-9999">
           <button
             type="button"
@@ -148,17 +148,43 @@ export default function UserActionsMenu({
             Block user
           </button>
         </div>
-      )}
+      ) : null}
 
-      {/* ✅ reuse your existing modals */}
-      <ReportUserModal
-        username={name}
+      <ReportEntityModal
         open={reportOpen}
         onClose={() => setReportOpen(false)}
+        entityLabel="user"
+        entityId={String(name)}
+        buildPath={({ id }) => `/user/${encodeURIComponent(id)}/report`}
+        reasons={[
+          { value: "spam", label: "Spam", hint: "Fake accounts or promotions" },
+          {
+            value: "impersonation",
+            label: "Impersonation",
+            hint: "Pretending to be someone else",
+          },
+          {
+            value: "harassment",
+            label: "Harassment or bullying",
+            hint: "Threats, targeting, insults",
+          },
+          {
+            value: "hate",
+            label: "Hate speech",
+            hint: "Attacks based on identity",
+          },
+          {
+            value: "inappropriate",
+            label: "Inappropriate content",
+            hint: "Content that violates guidelines",
+          },
+          { value: "other", label: "Other", hint: "Doesn’t fit above" },
+        ]}
+        defaultReason="spam"
       />
 
       <BlockUserModal
-        username={name}
+        username={String(name)}
         open={blockOpen}
         onClose={() => setBlockOpen(false)}
       />

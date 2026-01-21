@@ -7,6 +7,8 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
+import ReportEntityModal from "@/components/common/ReportEntityModal"
+
 const AVATAR_FALLBACK = "/avatar-placeholder.png"
 
 /* ---------- tiny modal shell ---------- */
@@ -36,7 +38,6 @@ function ModalShell({
     <div
       className="fixed inset-0 z-50"
       onMouseDown={(e) => {
-        // click backdrop to close
         if (e.target === e.currentTarget) onClose()
       }}
     >
@@ -48,137 +49,6 @@ function ModalShell({
         <div className="p-4">{children}</div>
       </div>
     </div>
-  )
-}
-
-/* ---------- report user modal ---------- */
-function ReportUserModal({
-  userId,
-  open,
-  onClose,
-}: {
-  userId: string
-  open: boolean
-  onClose: () => void
-}) {
-  const [reason, setReason] = useState("spam")
-  const [details, setDetails] = useState("")
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [sent, setSent] = useState(false)
-
-  useEffect(() => {
-    if (!open) return
-    setReason("spam")
-    setDetails("")
-    setBusy(false)
-    setError(null)
-    setSent(false)
-  }, [open])
-
-  async function submit() {
-    if (busy) return
-    setBusy(true)
-    setError(null)
-
-    try {
-      const res = await apiFetch(
-        `${API_URL}/user/${encodeURIComponent(userId)}/report`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          cache: "no-store",
-          body: JSON.stringify({
-            reason,
-            details: details.trim() || undefined,
-          }),
-        }
-      )
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => "")
-        throw new Error(text || `Request failed (${res.status})`)
-      }
-
-      setSent(true)
-    } catch (e: any) {
-      setError(e?.message || "Failed to send report.")
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  return (
-    <ModalShell open={open} title="Report user" onClose={onClose}>
-      {sent ? (
-        <div className="space-y-3">
-          <p className="text-sm text-(--dk-slate)">
-            Thanks. Your report was sent.
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 px-3 rounded-lg text-sm font-medium border border-(--dk-ink)/15 hover:bg-(--dk-mist) transition"
-          >
-            Close
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <label className="block">
-            <div className="text-xs font-medium text-(--dk-slate) mb-1">
-              Reason
-            </div>
-            <select
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              className="w-full h-10 rounded-lg border border-(--dk-ink)/15 bg-(--dk-paper) px-3 text-sm text-(--dk-ink)"
-            >
-              <option value="spam">Spam</option>
-              <option value="harassment">Harassment</option>
-              <option value="hate">Hate</option>
-              <option value="nudity">Nudity</option>
-              <option value="violence">Violence</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-
-          <label className="block">
-            <div className="text-xs font-medium text-(--dk-slate) mb-1">
-              Details (optional)
-            </div>
-            <textarea
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              rows={4}
-              className="w-full rounded-lg border border-(--dk-ink)/15 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink) resize-none"
-              placeholder="Add context that helps moderation…"
-            />
-          </label>
-
-          {error ? <div className="text-xs text-red-600">{error}</div> : null}
-
-          <div className="flex items-center justify-end gap-2 pt-1">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={busy}
-              className="h-9 px-3 rounded-lg text-sm font-medium border border-(--dk-ink)/15 hover:bg-(--dk-mist) transition disabled:opacity-60"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={submit}
-              disabled={busy}
-              className="h-9 px-3 rounded-lg text-sm font-medium bg-(--dk-ink) text-(--dk-paper) hover:opacity-90 transition disabled:opacity-60"
-            >
-              {busy ? "Sending…" : "Submit"}
-            </button>
-          </div>
-        </div>
-      )}
-    </ModalShell>
   )
 }
 
@@ -214,7 +84,7 @@ function BlockUserModal({
         {
           method: "POST",
           cache: "no-store",
-        }
+        },
       )
 
       if (!res.ok) {
@@ -288,7 +158,7 @@ export default function UserDayHeader({
 
   const userId = useMemo(
     () => String(user?._id || user?.id || user?.userId || ""),
-    [user]
+    [user],
   )
 
   // menu
@@ -338,7 +208,7 @@ export default function UserDayHeader({
           <div className="text-sm text-(--dk-slate) truncate">@{handle}</div>
         </div>
 
-        {!isSelf && (
+        {!isSelf ? (
           <button
             type="button"
             onClick={onToggleFollow}
@@ -352,9 +222,9 @@ export default function UserDayHeader({
           >
             {isFollowing ? "Following" : "Follow"}
           </button>
-        )}
+        ) : null}
 
-        {/* menu (hide for self if you want; right now still shows but empty actions are blocked) */}
+        {/* menu */}
         <div ref={menuRef} className="relative">
           <button
             type="button"
@@ -413,17 +283,20 @@ export default function UserDayHeader({
       {/* modals */}
       {!isSelf && userId ? (
         <>
-          <ReportUserModal
-            userId={userId}
+          <ReportEntityModal
             open={reportOpen}
             onClose={() => setReportOpen(false)}
+            entityLabel="user"
+            entityId={String(userId)}
+            buildPath={({ id }) => `/user/${encodeURIComponent(id)}/report`}
+            defaultReason="spam"
           />
+
           <BlockUserModal
             userId={userId}
             open={blockOpen}
             onClose={() => setBlockOpen(false)}
             onBlocked={() => {
-              // optional: after block, kick them back or refresh
               router.push("/feed")
               router.refresh()
             }}

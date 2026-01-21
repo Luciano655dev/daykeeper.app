@@ -4,11 +4,11 @@ import Image from "next/image"
 import { useEffect, useMemo, useRef, useState } from "react"
 import FeedPostItem from "./FeedPostItem"
 import FeedUserDayCard from "./FeedUserDayCard"
-import { MoreHorizontal, Flag, Ban, ChevronDown } from "lucide-react"
-import ReportUserModal from "../common/ReportUserModal"
+import { MoreHorizontal, Flag, Ban } from "lucide-react"
 import BlockUserModal from "../common/BlockUserModal"
+import ReportEntityModal from "@/components/common/ReportEntityModal"
 import { useRouter } from "next/navigation"
-import { toDayParam } from "@/lib/date" // ✅ adjust to your real helper path
+import { toDayParam } from "@/lib/date"
 
 const AVATAR_FALLBACK = "/avatar-placeholder.png"
 
@@ -195,13 +195,41 @@ export default function FeedUserDay({
         </div>
       </div>
 
-      {/* modals */}
-      <ReportUserModal
-        username={String(username)}
+      {/* report modal (generic) */}
+      <ReportEntityModal
         open={reportOpen}
         onClose={() => setReportOpen(false)}
+        entityLabel="user"
+        entityId={String(username)}
+        buildPath={({ id }) => `/user/${encodeURIComponent(id)}/report`}
+        reasons={[
+          { value: "spam", label: "Spam", hint: "Fake accounts or promotions" },
+          {
+            value: "impersonation",
+            label: "Impersonation",
+            hint: "Pretending to be someone else",
+          },
+          {
+            value: "harassment",
+            label: "Harassment or bullying",
+            hint: "Threats, targeting, insults",
+          },
+          {
+            value: "hate",
+            label: "Hate speech",
+            hint: "Attacks based on identity",
+          },
+          {
+            value: "inappropriate",
+            label: "Inappropriate content",
+            hint: "Content that violates guidelines",
+          },
+          { value: "other", label: "Other", hint: "Doesn’t fit above" },
+        ]}
+        defaultReason="spam"
       />
 
+      {/* block modal */}
       <BlockUserModal
         username={String(username)}
         open={blockOpen}
