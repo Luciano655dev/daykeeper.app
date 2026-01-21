@@ -69,6 +69,7 @@ export function normalizeFeedPayload(json: any): FeedUserDay[] {
           userLiked: p.userLiked,
           userCommented: p.userCommented,
           edited_at: p?.edited_at,
+          isOwner: p?.isOwner,
         }))
       : [],
   }))
