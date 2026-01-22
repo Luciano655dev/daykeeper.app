@@ -5,6 +5,7 @@ import FeedPostItem from "@/components/Feed/FeedPostItem"
 import FeedTimelineEnd from "../Feed/FeedTimelineEnd"
 import { Loader2 } from "lucide-react"
 import type { PaginationMeta } from "@/hooks/useUserDay"
+import formatDDMMYYYY from "@/utils/formatDate"
 
 export default function UserDayPosts({
   posts,
@@ -46,7 +47,7 @@ export default function UserDayPosts({
         loadLockRef.current = true
         onLoadMore()
       },
-      { root: null, rootMargin: "250px", threshold: 0 }
+      { root: null, rootMargin: "250px", threshold: 0 },
     )
 
     io.observe(el)
@@ -67,7 +68,7 @@ export default function UserDayPosts({
           key={p._id}
           post={{
             id: p._id,
-            time: p.date,
+            time: formatDDMMYYYY(p.date),
             content: p.data,
             media: p.media,
             likes: p.likes,

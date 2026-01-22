@@ -7,6 +7,7 @@ import {
   Clock,
   Loader2,
   ChevronUp,
+  ChevronDown,
 } from "lucide-react"
 import UserDayListRow from "./UserDayListRow"
 import PrivacyChip from "@/components/common/PrivacyChip"
@@ -87,14 +88,15 @@ export default function UserDayEvents({
 
   const visible = collapsed ? list.slice(0, PREVIEW_COUNT) : list
 
-  const totalCount = pagination?.totalCount ?? list.length
-  const remaining = Math.max(0, totalCount - list.length)
-
   const canCollapse = list.length > PREVIEW_COUNT && !collapsed
+  const canExpand = list.length > PREVIEW_COUNT && collapsed
+
+  // same mutual exclusion system as notes
+  const showLoadMore = !!hasMore && !!onLoadMore
+  const showShowAll = !showLoadMore && canExpand
 
   return (
     <div className="space-y-2">
-      {/* collapse (UI-only). shows after you've expanded / have enough items */}
       {canCollapse ? (
         <div className="flex justify-end">
           <button
@@ -169,8 +171,14 @@ export default function UserDayEvents({
         })}
       </div>
 
-      {/* load more (same label). Clicking load more should auto-expand */}
-      {hasMore && onLoadMore ? (
+      {showShowAll ? (
+        <ActionPill onClick={() => setCollapsed(false)}>
+          <ChevronDown size={16} />
+          Show all
+        </ActionPill>
+      ) : null}
+
+      {showLoadMore ? (
         <ActionPill
           onClick={() => {
             if (loadingMore) return
@@ -185,7 +193,10 @@ export default function UserDayEvents({
               Loading…
             </>
           ) : (
-            <>Load more{remaining ? ` (${remaining})` : ""}</>
+            <>
+              <ChevronDown size={16} />
+              Show more
+            </>
           )}
         </ActionPill>
       ) : null}

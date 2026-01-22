@@ -24,11 +24,8 @@ export default function FeedUserDay({
   const username = userDay.user_info.username
   const displayName = userDay?.user_info?.displayName
 
-  const sortedPosts = useMemo(() => {
-    const list = [...(userDay.posts || [])]
-    return list.sort(
-      (a: any, b: any) => Number(!!b.highlighted) - Number(!!a.highlighted),
-    )
+  const posts = useMemo(() => {
+    return userDay.posts
   }, [userDay.posts])
 
   const postCount = Number(
@@ -36,7 +33,7 @@ export default function FeedUserDay({
       userDay.postsCount ??
       userDay.totalPosts ??
       userDay.posts_total ??
-      sortedPosts.length,
+      posts.length,
   )
 
   const hasMorePosts = postCount > 3
@@ -167,11 +164,11 @@ export default function FeedUserDay({
         <FeedUserDayCard userDay={userDay} selectedDate={selectedDate} />
 
         <div className="space-y-4">
-          {sortedPosts.map((post, idx) => (
+          {posts.map((post: any, idx: any) => (
             <FeedPostItem
               key={post.id}
               post={post}
-              isLast={idx === sortedPosts.length - 1}
+              isLast={idx === posts.length - 1}
             />
           ))}
 
@@ -182,7 +179,7 @@ export default function FeedUserDay({
                 e.preventDefault()
                 e.stopPropagation()
                 router.push(
-                  `/day/${userDay.user_info.username}?date=${toDayParam(
+                  `/${userDay.user_info.username}?date=${toDayParam(
                     selectedDate,
                   )}`,
                 )

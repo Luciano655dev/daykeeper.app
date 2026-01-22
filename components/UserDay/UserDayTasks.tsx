@@ -8,6 +8,7 @@ import {
   ClipboardList,
   Loader2,
   ChevronUp,
+  ChevronDown,
 } from "lucide-react"
 import UserDayListRow from "./UserDayListRow"
 import PrivacyChip from "@/components/common/PrivacyChip"
@@ -129,10 +130,8 @@ export default function UserDayTasks({
 
   const list = useMemo(() => (Array.isArray(tasks) ? tasks : []), [tasks])
 
-  // UI-only collapse state (MUST be before any return)
   const [collapsed, setCollapsed] = useState(true)
 
-  // per-task busy/error
   const [busyMap, setBusyMap] = useState<Record<string, boolean>>({})
   const [errMap, setErrMap] = useState<Record<string, string | null>>({})
 
@@ -142,10 +141,12 @@ export default function UserDayTasks({
 
   const visible = collapsed ? list.slice(0, PREVIEW_COUNT) : list
 
-  const totalCount = pagination?.totalCount ?? list.length
-  const remaining = Math.max(0, totalCount - list.length)
-
   const canCollapse = list.length > PREVIEW_COUNT && !collapsed
+  const canExpand = list.length > PREVIEW_COUNT && collapsed
+
+  // same mutual exclusion system as notes
+  const showLoadMore = !!hasMore && !!onLoadMore
+  const showShowAll = !showLoadMore && canExpand
 
   async function toggleTaskCompleted(task: any) {
     const id = String(task?._id || "")
@@ -163,7 +164,6 @@ export default function UserDayTasks({
     setBusyMap((m) => ({ ...m, [id]: true }))
     setErrMap((m) => ({ ...m, [id]: null }))
 
-    // optimistic: update the list we have via userDay cache (best effort)
     qc.setQueriesData({ queryKey: ["userDay"] }, (old: any) => {
       if (!old) return old
       try {
@@ -186,7 +186,6 @@ export default function UserDayTasks({
       }
     })
 
-    // also update task detail cache if it exists
     qc.setQueryData(["taskDetail", id], (old: any) => {
       if (!old) return old
       return { ...old, completed: next }
@@ -212,7 +211,6 @@ export default function UserDayTasks({
 
       qc.invalidateQueries({ queryKey: ["userDay"] })
     } catch (err: any) {
-      // rollback
       qc.setQueriesData({ queryKey: ["userDay"] }, (old: any) => {
         if (!old) return old
         try {
@@ -315,7 +313,14 @@ export default function UserDayTasks({
         })}
       </div>
 
-      {hasMore && onLoadMore ? (
+      {showShowAll ? (
+        <ActionPill onClick={() => setCollapsed(false)}>
+          <ChevronDown size={16} />
+          Show all
+        </ActionPill>
+      ) : null}
+
+      {showLoadMore ? (
         <ActionPill
           onClick={() => {
             if (loadingMore) return
@@ -330,7 +335,10 @@ export default function UserDayTasks({
               Loading…
             </>
           ) : (
-            <>Load more{remaining ? ` (${remaining})` : ""}</>
+            <>
+              <ChevronDown size={16} />
+              Show more
+            </>
           )}
         </ActionPill>
       ) : null}

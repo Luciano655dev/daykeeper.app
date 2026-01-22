@@ -1,17 +1,27 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { StickyNote, Clock, Loader2, ChevronUp } from "lucide-react"
+import {
+  StickyNote,
+  Clock,
+  Loader2,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react"
+import { useRouter } from "next/navigation"
+
 import UserDayListRow from "./UserDayListRow"
 import PrivacyChip from "@/components/common/PrivacyChip"
 import ActionPill from "../common/ActionPill"
 import type { PaginationMeta } from "@/hooks/useUserDay"
-import { useRouter } from "next/navigation"
 
 function formatTime(s?: string) {
   if (!s) return ""
   const d = new Date(s)
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  return d.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 }
 
 export default function UserDayNotes({
@@ -32,7 +42,7 @@ export default function UserDayNotes({
 
   const list = useMemo(() => (Array.isArray(notes) ? notes : []), [notes])
 
-  // UI-only collapse state (MUST be before any return)
+  // UI-only collapse state
   const [collapsed, setCollapsed] = useState(true)
 
   if (!list.length) {
@@ -41,10 +51,14 @@ export default function UserDayNotes({
 
   const visible = collapsed ? list.slice(0, PREVIEW_COUNT) : list
 
-  const totalCount = pagination?.totalCount ?? list.length
-  const remaining = Math.max(0, totalCount - list.length)
-
   const canCollapse = list.length > PREVIEW_COUNT && !collapsed
+  const canExpand = list.length > PREVIEW_COUNT && collapsed
+
+  // 🔒 MUTUAL EXCLUSION RULE
+  // If there are more pages → only show "Load more"
+  // If there are NO more pages → allow "Show all"
+  const showLoadMore = !!hasMore && !!onLoadMore
+  const showShowAll = !showLoadMore && canExpand
 
   return (
     <div className="space-y-2">
@@ -81,7 +95,14 @@ export default function UserDayNotes({
         ))}
       </div>
 
-      {hasMore && onLoadMore ? (
+      {showShowAll ? (
+        <ActionPill onClick={() => setCollapsed(false)}>
+          <ChevronDown size={16} />
+          Show all
+        </ActionPill>
+      ) : null}
+
+      {showLoadMore ? (
         <ActionPill
           onClick={() => {
             if (loadingMore) return
@@ -96,7 +117,10 @@ export default function UserDayNotes({
               Loading…
             </>
           ) : (
-            <>Load more{remaining ? ` (${remaining})` : ""}</>
+            <>
+              <ChevronDown size={16} />
+              Show more
+            </>
           )}
         </ActionPill>
       ) : null}
