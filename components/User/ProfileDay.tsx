@@ -40,6 +40,7 @@ export default function ProfileDaySections({ username, className }: Props) {
     loading,
     error,
     stats,
+    canView,
 
     tasks,
     notes,
@@ -126,19 +127,20 @@ export default function ProfileDaySections({ username, className }: Props) {
     (stats?.notesCount ?? notes.length) +
     (stats?.eventsCount ?? events.length) +
     (postsMeta?.totalCount ?? posts.length)
+  const visibleEntriesCount = canView ? entriesCount : 0
 
   return (
     <section className={className}>
-      <PostsHeader
-        selectedDate={selectedDate}
-        onChangeDate={changeDate}
-        onSelectDate={setDate}
-        isToday={isToday}
-        loading={loading}
-        error={error}
-        usersCount={entriesCount}
-        onRetry={() => setDate(selectedDate)}
-      />
+        <PostsHeader
+          selectedDate={selectedDate}
+          onChangeDate={changeDate}
+          onSelectDate={setDate}
+          isToday={isToday}
+          loading={loading}
+          error={error}
+          usersCount={visibleEntriesCount}
+          onRetry={() => setDate(selectedDate)}
+        />
 
       {loading && (
         <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
@@ -150,53 +152,68 @@ export default function ProfileDaySections({ username, className }: Props) {
 
       {!loading && !error && (
         <>
-          <UserDaySection title="Tasks" count={stats?.tasksCount ?? 0}>
-            <UserDayTasks
-              tasks={tasks}
-              pagination={tasksMeta}
-              hasMore={hasMoreTasks}
-              loadingMore={loadingMoreTasks}
-              onLoadMore={loadMoreTasks}
-              onCollapse={collapseTasks}
-            />
-          </UserDaySection>
+          {!canView ? (
+            <div className="px-4 py-10 border-t border-(--dk-ink)/10">
+              <div className="rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)/40 px-4 py-4 text-center">
+                <div className="text-sm font-semibold text-(--dk-ink)">
+                  This account is private
+                </div>
+                <div className="text-xs text-(--dk-slate) mt-1">
+                  Follow this user to see their day entries.
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <UserDaySection title="Tasks" count={stats?.tasksCount ?? 0}>
+                <UserDayTasks
+                  tasks={tasks}
+                  pagination={tasksMeta}
+                  hasMore={hasMoreTasks}
+                  loadingMore={loadingMoreTasks}
+                  onLoadMore={loadMoreTasks}
+                  onCollapse={collapseTasks}
+                />
+              </UserDaySection>
 
-          <UserDaySection title="Notes" count={stats?.notesCount ?? 0}>
-            <UserDayNotes
-              notes={notes}
-              pagination={notesMeta}
-              hasMore={hasMoreNotes}
-              loadingMore={loadingMoreNotes}
-              onLoadMore={loadMoreNotes}
-              onCollapse={collapseNotes}
-            />
-          </UserDaySection>
+              <UserDaySection title="Notes" count={stats?.notesCount ?? 0}>
+                <UserDayNotes
+                  notes={notes}
+                  pagination={notesMeta}
+                  hasMore={hasMoreNotes}
+                  loadingMore={loadingMoreNotes}
+                  onLoadMore={loadMoreNotes}
+                  onCollapse={collapseNotes}
+                />
+              </UserDaySection>
 
-          <UserDaySection title="Events" count={stats?.eventsCount ?? 0}>
-            <UserDayEvents
-              events={events}
-              pagination={eventsMeta}
-              hasMore={hasMoreEvents}
-              loadingMore={loadingMoreEvents}
-              onLoadMore={loadMoreEvents}
-              onCollapse={collapseEvents}
-            />
-          </UserDaySection>
+              <UserDaySection title="Events" count={stats?.eventsCount ?? 0}>
+                <UserDayEvents
+                  events={events}
+                  pagination={eventsMeta}
+                  hasMore={hasMoreEvents}
+                  loadingMore={loadingMoreEvents}
+                  onLoadMore={loadMoreEvents}
+                  onCollapse={collapseEvents}
+                />
+              </UserDaySection>
 
-          {/* UPDATED: posts now use infinite scroll props */}
-          <UserDaySection
-            title="Posts"
-            count={postsMeta?.totalCount ?? posts.length}
-          >
-            <UserDayPosts
-              posts={posts}
-              pagination={postsMeta}
-              hasMore={hasMorePosts}
-              loadingMore={loadingMorePosts}
-              onLoadMore={loadMorePosts}
-              onCollapse={collapsePosts}
-            />
-          </UserDaySection>
+              {/* UPDATED: posts now use infinite scroll props */}
+              <UserDaySection
+                title="Posts"
+                count={postsMeta?.totalCount ?? posts.length}
+              >
+                <UserDayPosts
+                  posts={posts}
+                  pagination={postsMeta}
+                  hasMore={hasMorePosts}
+                  loadingMore={loadingMorePosts}
+                  onLoadMore={loadMorePosts}
+                  onCollapse={collapsePosts}
+                />
+              </UserDaySection>
+            </>
+          )}
         </>
       )}
     </section>

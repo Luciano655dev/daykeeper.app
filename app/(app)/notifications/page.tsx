@@ -2,15 +2,18 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, UserPlus } from "lucide-react"
 import NotificationsList from "@/components/Notifications/NotificationsList"
 import { useNotifications } from "@/hooks/useNotifications"
+import { apiFetch } from "@/lib/authClient"
+import { API_URL } from "@/config"
 
 export default function NotificationsPage() {
   const router = useRouter()
   const [sessionNewIds, setSessionNewIds] = useState<Set<string>>(
     () => new Set()
   )
+  const [isPrivate, setIsPrivate] = useState(false)
   const {
     items,
     loading,
@@ -23,6 +26,25 @@ export default function NotificationsPage() {
     totalCount,
     unreadCount,
   } = useNotifications()
+
+  useEffect(() => {
+    let alive = true
+
+    async function loadPrivacy() {
+      try {
+        const res = await apiFetch(`${API_URL}/auth/user`, { method: "GET" })
+        if (!res.ok) return
+        const json = await res.json().catch(() => null)
+        const next = !!json?.user?.private
+        if (alive) setIsPrivate(next)
+      } catch {}
+    }
+
+    loadPrivacy()
+    return () => {
+      alive = false
+    }
+  }, [])
 
   const displayUnreadCount =
     sessionNewIds.size > 0 ? sessionNewIds.size : unreadCount
@@ -72,6 +94,17 @@ export default function NotificationsPage() {
                   : "All caught up"} • {totalCount} total
               </div>
             </div>
+
+            {isPrivate ? (
+              <button
+                type="button"
+                onClick={() => router.push("/settings/follow-requests")}
+                className="ml-auto inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium bg-(--dk-sky)/15 text-(--dk-ink) hover:bg-(--dk-sky)/25 transition"
+              >
+                <UserPlus size={14} />
+                Follow requests
+              </button>
+            ) : null}
           </div>
         </div>
 

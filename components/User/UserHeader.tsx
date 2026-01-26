@@ -33,6 +33,7 @@ export default function ProfileHeader({ user }: { user: any }) {
 
   const bio = String(user?.bio || "").trim()
   const initialInCloseFriends = !!user?.isInCloseFriends
+  const initialRequested = user?.follow_info === "requested"
 
   // --- optimistic follow state ---
   const initialFollowing = !!user?.isFollowing
@@ -42,6 +43,7 @@ export default function ProfileHeader({ user }: { user: any }) {
     : 0
 
   const [isFollowing, setIsFollowing] = useState<boolean>(initialFollowing)
+  const [isRequested, setIsRequested] = useState<boolean>(initialRequested)
   const [followers, setFollowers] = useState<number>(initialFollowers)
   const [followingCount] = useState<number>(initialFollowingCount)
   const [busy, setBusy] = useState(false)
@@ -51,6 +53,7 @@ export default function ProfileHeader({ user }: { user: any }) {
   useEffect(() => {
     setIsFollowing(!!user?.isFollowing)
     setFollowers(Number.isFinite(user?.followers) ? user.followers : 0)
+    setIsRequested(user?.follow_info === "requested")
   }, [user?._id])
 
   const followEndpoint = useMemo(() => {
@@ -59,6 +62,28 @@ export default function ProfileHeader({ user }: { user: any }) {
 
   async function toggleFollow() {
     if (busy || isSelf) return
+
+    if (isPrivate && !isFollowing) {
+      if (isRequested) return
+
+      setPulse(true)
+      window.setTimeout(() => setPulse(false), 180)
+
+      setBusy(true)
+      try {
+        const res = await apiFetch(followEndpoint, { method: "POST" })
+        if (!res.ok) {
+          const text = await res.text().catch(() => "")
+          throw new Error(text || `Request failed (${res.status})`)
+        }
+        setIsRequested(true)
+      } catch {
+        setIsRequested(false)
+      } finally {
+        setBusy(false)
+      }
+      return
+    }
 
     const prevFollowing = isFollowing
     const prevFollowers = followers
@@ -121,6 +146,8 @@ export default function ProfileHeader({ user }: { user: any }) {
           <ActionButton
             isSelf={isSelf}
             isFollowing={isFollowing}
+            isRequested={isRequested}
+            isPrivate={isPrivate}
             busy={busy}
             pulse={pulse}
             onClick={toggleFollow}
@@ -168,12 +195,16 @@ function PrivacyBadge({ isPrivate }: { isPrivate: boolean }) {
 function ActionButton({
   isSelf,
   isFollowing,
+  isRequested,
+  isPrivate,
   busy,
   pulse,
   onClick,
 }: {
   isSelf: boolean
   isFollowing: boolean
+  isRequested: boolean
+  isPrivate: boolean
   busy: boolean
   pulse: boolean
   onClick: () => void
@@ -206,6 +237,31 @@ function ActionButton({
         className={`${base} ${pop} bg-(--dk-mist)/35 text-(--dk-ink) hover:bg-(--dk-mist)/55 disabled:opacity-60 cursor-pointer`}
       >
         Following
+      </button>
+    )
+  }
+
+  if (isRequested) {
+    return (
+      <button
+        type="button"
+        disabled
+        className={`${base} ${pop} bg-(--dk-mist)/35 text-(--dk-slate)`}
+      >
+        Requested
+      </button>
+    )
+  }
+
+  if (isPrivate) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={busy}
+        className={`${base} ${pop} font-semibold bg-(--dk-sky) text-white hover:opacity-90 disabled:opacity-70 cursor-pointer`}
+      >
+        Request
       </button>
     )
   }

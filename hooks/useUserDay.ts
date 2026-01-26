@@ -221,12 +221,19 @@ export function useUserDay(username: string, dateParam: string) {
     enabled,
   })
 
+  const user = userQ.data ?? null
+  const isPrivate = !!user?.private
+  const isFollowing = !!user?.isFollowing
+  const followInfo = user?.follow_info ?? null
+  const isSelf = followInfo === "same_user"
+  const canView = userQ.isSuccess ? !isPrivate || isFollowing || isSelf : false
+
   const DEFAULT_PAGE_SIZE = 5
   const POSTS_PAGE_SIZE = 5
 
   const tasksQ: any = useInfiniteQuery({
     queryKey: [...baseKey, "tasks"],
-    enabled,
+    enabled: enabled && canView,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       fetchPagedKind<any>(
@@ -245,7 +252,7 @@ export function useUserDay(username: string, dateParam: string) {
 
   const notesQ: any = useInfiniteQuery({
     queryKey: [...baseKey, "notes"],
-    enabled,
+    enabled: enabled && canView,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       fetchPagedKind<any>(
@@ -264,7 +271,7 @@ export function useUserDay(username: string, dateParam: string) {
 
   const eventsQ: any = useInfiniteQuery({
     queryKey: [...baseKey, "events"],
-    enabled,
+    enabled: enabled && canView,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       fetchPagedKind<any>(
@@ -283,7 +290,7 @@ export function useUserDay(username: string, dateParam: string) {
 
   const postsQ: any = useInfiniteQuery({
     queryKey: [...baseKey, "posts"],
-    enabled,
+    enabled: enabled && canView,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       fetchPagedPosts(username, dateParam, Number(pageParam), POSTS_PAGE_SIZE),
@@ -296,20 +303,19 @@ export function useUserDay(username: string, dateParam: string) {
 
   const loading =
     userQ.isLoading ||
-    tasksQ.isLoading ||
-    notesQ.isLoading ||
-    eventsQ.isLoading ||
-    postsQ.isLoading
+    (canView &&
+      (tasksQ.isLoading ||
+        notesQ.isLoading ||
+        eventsQ.isLoading ||
+        postsQ.isLoading))
 
   const error =
     (userQ.error && safeApiMessage(userQ.error)) ||
-    (tasksQ.error && safeApiMessage(tasksQ.error)) ||
-    (notesQ.error && safeApiMessage(notesQ.error)) ||
-    (eventsQ.error && safeApiMessage(eventsQ.error)) ||
-    (postsQ.error && safeApiMessage(postsQ.error)) ||
+    (canView && tasksQ.error && safeApiMessage(tasksQ.error)) ||
+    (canView && notesQ.error && safeApiMessage(notesQ.error)) ||
+    (canView && eventsQ.error && safeApiMessage(eventsQ.error)) ||
+    (canView && postsQ.error && safeApiMessage(postsQ.error)) ||
     null
-
-  const user = userQ.data ?? null
 
   const tasks = flattenPagesUniqueById(tasksQ.data?.pages)
   const notes = flattenPagesUniqueById(notesQ.data?.pages)
@@ -330,6 +336,7 @@ export function useUserDay(username: string, dateParam: string) {
   return {
     loading,
     error,
+    canView,
 
     user,
     stats,

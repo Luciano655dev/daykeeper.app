@@ -15,6 +15,7 @@ export function useProfileDay(username: string, dateParam: string | null) {
   const {
     loading,
     error,
+    canView,
 
     user,
     stats,
@@ -53,6 +54,7 @@ export function useProfileDay(username: string, dateParam: string | null) {
   return {
     loading,
     error,
+    canView,
     dateParam: safeDateParam,
 
     user,
