@@ -1,0 +1,207 @@
+// =====================================
+// FILE: components/search/SearchDayKindRow.tsx
+// Note/Event/Task single result row with: ContentHeader (user) + UserDayListRow (item)
+// =====================================
+"use client"
+
+import { useMemo } from "react"
+import { useRouter } from "next/navigation"
+import { StickyNote, CalendarDays, ClipboardList } from "lucide-react"
+
+import ContentHeader from "@/components/common/ContentHeader"
+import UserDayListRow from "@/components/UserDay/UserDayListRow"
+import PrivacyChip from "@/components/common/PrivacyChip"
+
+function formatPostedAt(s?: string) {
+  if (!s) return ""
+  const d = new Date(s)
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+}
+
+function pad2(n: number) {
+  return String(n).padStart(2, "0")
+}
+function weekKey(d: Date) {
+  const x = new Date(d)
+  x.setHours(0, 0, 0, 0)
+  const day = x.getDay()
+  x.setDate(x.getDate() - day)
+  return x.toISOString().slice(0, 10)
+}
+function formatShortWeekdayTime(d: Date) {
+  const weekday = d.toLocaleDateString([], { weekday: "short" })
+  const hh = pad2(d.getHours())
+  const mm = pad2(d.getMinutes())
+  return `${weekday} ${hh}:${mm}`
+}
+function formatFullDDMMYYYYTime(d: Date) {
+  const dd = pad2(d.getDate())
+  const mm = pad2(d.getMonth() + 1)
+  const yyyy = d.getFullYear()
+  const hh = pad2(d.getHours())
+  const min = pad2(d.getMinutes())
+  return `${dd}/${mm}/${yyyy} ${hh}:${min}`
+}
+function formatEventTimeRange(startISO?: string, endISO?: string) {
+  const start = startISO ? new Date(startISO) : null
+  const end = endISO ? new Date(endISO) : null
+  if (!start) return { startText: "", endText: "" }
+
+  const crossesWeek = !!end && weekKey(start) !== weekKey(end)
+  const fmt = crossesWeek ? formatFullDDMMYYYYTime : formatShortWeekdayTime
+
+  return { startText: fmt(start), endText: end ? fmt(end) : "" }
+}
+
+function formatTime(iso?: string) {
+  if (!iso) return ""
+  const d = new Date(iso)
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+}
+
+function leftIconFor(type: "Note" | "Event" | "Task") {
+  if (type === "Note") return <StickyNote size={18} />
+  if (type === "Event") return <CalendarDays size={18} />
+  return <ClipboardList size={22} />
+}
+
+function titleFor(item: any, type: "Note" | "Event" | "Task") {
+  if (type === "Note")
+    return (
+      <span className="whitespace-pre-wrap">
+        {item?.text ?? item?.data ?? ""}
+      </span>
+    )
+  if (type === "Event") return item?.title || "Event"
+  return item?.title || item?.name || "Task"
+}
+
+function hrefFor(item: any, type: "Note" | "Event" | "Task") {
+  if (!item?._id) return null
+  const id = encodeURIComponent(String(item._id))
+  if (type === "Note") return `/day/notes/${id}`
+  if (type === "Event") return `/day/events/${id}`
+  return `/day/tasks/${id}`
+}
+
+export default function SearchDayKindRow({
+  type,
+  item,
+}: {
+  type: "Note" | "Event" | "Task"
+  item: any
+}) {
+  const router = useRouter()
+
+  // backend sample uses user_info on posts; for day kinds, we accept either shape
+  const user = item?.user_info || item?.userInfo || item?.user || null
+
+  // "stamp" should show when this item was created (like header)
+  const createdISO =
+    item?.created_at || item?.createdAt || item?.dateCreated || item?.date
+  const stamp = useMemo(() => formatPostedAt(createdISO), [createdISO])
+
+  const privacy = item?.privacy || item?.status
+
+  const href = hrefFor(item, type)
+
+  // for Event: show right time range chip like your UserDayEvents
+  const right =
+    type === "Event"
+      ? (() => {
+          const { startText, endText } = formatEventTimeRange(
+            item?.dateStartLocal || item?.dateStart,
+            item?.dateEndLocal || item?.dateEnd,
+          )
+
+          if (!startText) return null
+
+          return (
+            <div className="flex items-center justify-end min-w-0 max-w-full">
+              <div
+                className={[
+                  "inline-flex items-center gap-2",
+                  "rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)/35",
+                  "px-2.5 py-1 text-xs",
+                  "max-w-full min-w-0",
+                  "flex-wrap sm:flex-nowrap",
+                ].join(" ")}
+              >
+                <span className="font-semibold text-(--dk-ink) whitespace-nowrap">
+                  {startText}
+                </span>
+
+                {endText ? (
+                  <>
+                    <span className="text-(--dk-slate)/70 shrink-0">→</span>
+                    <span className="font-semibold text-(--dk-ink) whitespace-nowrap">
+                      {endText}
+                    </span>
+                  </>
+                ) : null}
+              </div>
+            </div>
+          )
+        })()
+      : null
+
+  // row meta top like your UserDay rows
+  const metaTop =
+    type === "Event" ? (
+      <span className="inline-flex items-center gap-2 flex-wrap min-w-0">
+        <span className="inline-flex items-center gap-1.5 text-xs text-(--dk-slate) shrink-0">
+          {formatTime(createdISO)}
+        </span>
+        <div className="shrink-0">
+          <PrivacyChip privacy={privacy} />
+        </div>
+      </span>
+    ) : (
+      <span className="inline-flex items-center gap-2">
+        <span className="inline-flex items-center gap-1.5">
+          {formatTime(item?.dateLocal || item?.date || createdISO)}
+        </span>
+        <PrivacyChip privacy={privacy} />
+      </span>
+    )
+
+  return (
+    <div
+      className={[
+        "rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper)",
+        "hover:bg-(--dk-mist)/40 hover:border-(--dk-sky)/35 transition",
+        "p-3",
+      ].join(" ")}
+      onClick={() => {
+        if (href) router.push(href)
+      }}
+      role="button"
+      tabIndex={0}
+    >
+      {/* user header so you know who made it */}
+      <ContentHeader
+        user={user}
+        stamp={stamp}
+        privacy={privacy}
+        onUserClick={() => {
+          const username = user?.username
+          if (username) router.push(`/${encodeURIComponent(String(username))}`)
+        }}
+        menuItems={[]}
+      />
+
+      {/* item row */}
+      <div className="mt-2">
+        <UserDayListRow
+          leftIcon={leftIconFor(type)}
+          title={titleFor(item, type)}
+          metaTop={metaTop}
+          right={right || undefined}
+          onClick={() => {
+            if (href) router.push(href)
+          }}
+        />
+      </div>
+    </div>
+  )
+}

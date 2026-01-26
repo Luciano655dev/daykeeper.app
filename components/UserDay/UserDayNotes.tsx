@@ -53,10 +53,6 @@ export default function UserDayNotes({
 
   const canCollapse = list.length > PREVIEW_COUNT && !collapsed
   const canExpand = list.length > PREVIEW_COUNT && collapsed
-
-  // 🔒 MUTUAL EXCLUSION RULE
-  // If there are more pages → only show "Load more"
-  // If there are NO more pages → allow "Show all"
   const showLoadMore = !!hasMore && !!onLoadMore
   const showShowAll = !showLoadMore && canExpand
 
