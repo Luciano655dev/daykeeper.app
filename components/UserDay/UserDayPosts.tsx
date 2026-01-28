@@ -13,12 +13,14 @@ export default function UserDayPosts({
   loadingMore = false,
   onLoadMore,
   pagination,
+  onCollapse,
 }: {
   posts: any[]
   hasMore?: boolean
   loadingMore?: boolean
   onLoadMore?: () => void
   pagination?: PaginationMeta
+  onCollapse?: () => void
 }) {
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
