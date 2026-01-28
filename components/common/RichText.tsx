@@ -3,12 +3,14 @@
 import Link from "next/link"
 
 const TOKEN =
-  /(@[A-Za-z0-9_]{1,30}|https?:\/\/[^\s]+|www\.[^\s]+|[A-Za-z0-9-]+\.[A-Za-z]{2,}(?:\/[^\s]*)?)/g
+  /(@[A-Za-z0-9_]{1,30}|#[A-Za-z0-9_]{1,30}|https?:\/\/[^\s]+|www\.[^\s]+|[A-Za-z0-9-]+\.[A-Za-z]{2,}(?:\/[^\s]*)?)/g
 const TRAIL_PUNCT = /[),.!?:;\]]+$/
 const DOMAIN_ONLY =
   /^[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+(?::\d+)?(?:\/[^\s]*)?$/
 
-type Part = { type: "text"; value: string } | { type: "mention" | "link"; value: string; suffix?: string }
+type Part =
+  | { type: "text"; value: string }
+  | { type: "mention" | "link" | "hashtag"; value: string; suffix?: string }
 
 function splitParts(text: string): Part[] {
   if (!text) return [{ type: "text", value: "" }]
@@ -23,6 +25,13 @@ function splitParts(text: string): Part[] {
       const core = chunk.replace(TRAIL_PUNCT, "")
       const suffix = chunk.slice(core.length)
       parts.push({ type: "mention", value: core, suffix })
+      continue
+    }
+
+    if (chunk.startsWith("#")) {
+      const core = chunk.replace(TRAIL_PUNCT, "")
+      const suffix = chunk.slice(core.length)
+      parts.push({ type: "hashtag", value: core, suffix })
       continue
     }
 
@@ -73,6 +82,24 @@ export default function RichText({
             >
               {p.value}
             </Link>
+              {p.suffix}
+            </span>
+          )
+        }
+
+        if (p.type === "hashtag") {
+          const tag = p.value.slice(1)
+          return (
+            <span key={`h-${idx}`}>
+              <Link
+                href={`/search?type=Post&q=${encodeURIComponent(tag)}`}
+                className="text-(--dk-sky) hover:underline"
+                onClick={(e) => {
+                  if (stopPropagation) e.stopPropagation()
+                }}
+              >
+                {p.value}
+              </Link>
               {p.suffix}
             </span>
           )
