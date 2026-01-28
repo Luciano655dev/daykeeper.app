@@ -18,6 +18,8 @@ export type ApiUser = {
   followers?: number
   following?: number
   isFollowing?: boolean
+  follow_info?: string | null
+  displayName?: string
   roles?: string[]
 }
 
