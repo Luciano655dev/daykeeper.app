@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { MoreVertical } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
@@ -13,12 +14,15 @@ export default function UserActionsMenu({
   disabled,
   initialInCloseFriends,
   userKey,
+  isSelf = false,
 }: {
   name: string
   userKey: string
   disabled?: boolean
   initialInCloseFriends: boolean
+  isSelf?: boolean
 }) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
 
@@ -96,16 +100,20 @@ export default function UserActionsMenu({
         onMouseDown={(e) => {
           e.preventDefault()
           e.stopPropagation()
+          if (isSelf) {
+            router.push("/settings")
+            return
+          }
           if (!disabled) setOpen((v) => !v)
         }}
-        disabled={disabled}
+        disabled={disabled && !isSelf}
         aria-label="More actions"
         className="h-10 w-10 inline-flex items-center justify-center rounded-xl bg-(--dk-paper) hover:bg-(--dk-mist)/40 transition disabled:opacity-60 cursor-pointer"
       >
         <MoreVertical size={18} className="text-(--dk-slate)" />
       </button>
 
-      {open ? (
+      {!isSelf && open ? (
         <div className="absolute right-0 mt-2 w-56 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) shadow-lg overflow-hidden z-9999">
           <button
             type="button"

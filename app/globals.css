@@ -30,6 +30,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+input,
+textarea,
+select {
+  color: var(--dk-ink);
+  background-color: var(--dk-paper);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: color-mix(in srgb, var(--dk-slate) 75%, transparent);
+}
+
 button,
 a,
 summary,

@@ -160,6 +160,7 @@ export default function ProfileHeader({ user }: { user: any }) {
             userKey={String(user?._id || handle)}
             name={handle}
             disabled={busy || isSelf}
+            isSelf={isSelf}
             initialInCloseFriends={initialInCloseFriends}
           />
         </div>
