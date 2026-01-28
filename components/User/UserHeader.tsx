@@ -30,8 +30,9 @@ export default function ProfileHeader({ user }: { user: any }) {
   const isPrivate = !!user?.private
   const isSelf = user?.follow_info == "same_user"
 
-  const username = String(user?.displayName || "User")
-  const handle = String(user?.username || user?.username || user?.name || "")
+  const username = String(user?.username || user?.handle || "")
+  const displayName = String(user?.displayName || username || "User")
+  const handle = username
 
   const bio = String(user?.bio || "").trim()
   const initialInCloseFriends = !!user?.isInCloseFriends
@@ -123,7 +124,7 @@ export default function ProfileHeader({ user }: { user: any }) {
           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-(--dk-mist)/40">
             <Image
               src={avatar}
-              alt={username}
+              alt={username || displayName}
               fill
               className="object-cover"
               sizes="64px"
@@ -133,7 +134,7 @@ export default function ProfileHeader({ user }: { user: any }) {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 min-w-0 flex-wrap">
               <h1 className="text-xl font-semibold text-(--dk-ink) truncate">
-                {username}
+                {displayName}
               </h1>
               <PrivacyBadge isPrivate={isPrivate} />
             </div>
@@ -159,7 +160,7 @@ export default function ProfileHeader({ user }: { user: any }) {
           <UserActionsMenu
             userKey={String(user?._id || handle)}
             name={handle}
-            disabled={busy || isSelf}
+            disabled={busy || isSelf || !handle}
             isSelf={isSelf}
             initialInCloseFriends={initialInCloseFriends}
           />

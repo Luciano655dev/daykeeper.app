@@ -66,13 +66,13 @@ export default function UserActionsMenu({
     }
   }, [open])
 
-  const closeFriendsUrl = useMemo(
-    () => `${API_URL}/close_friends/${encodeURIComponent(name)}`,
-    [name],
-  )
+  const closeFriendsUrl = useMemo(() => {
+    if (!name) return ""
+    return `${API_URL}/close_friends/${encodeURIComponent(name)}`
+  }, [name])
 
   async function toggleCloseFriends() {
-    if (busy || disabled) return
+    if (busy || disabled || !closeFriendsUrl) return
 
     const prev = isInCloseFriends
     const next = !prev
