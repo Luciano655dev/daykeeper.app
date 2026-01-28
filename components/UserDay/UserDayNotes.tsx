@@ -31,12 +31,14 @@ export default function UserDayNotes({
   hasMore = false,
   loadingMore = false,
   onLoadMore,
+  onCollapse,
 }: {
   notes?: any[]
   pagination?: PaginationMeta
   hasMore?: boolean
   loadingMore?: boolean
   onLoadMore?: () => void
+  onCollapse?: () => void
 }) {
   const router = useRouter()
   const PREVIEW_COUNT = 5
@@ -63,7 +65,10 @@ export default function UserDayNotes({
         <div className="flex justify-end">
           <button
             type="button"
-            onClick={() => setCollapsed(true)}
+            onClick={() => {
+              setCollapsed(true)
+              onCollapse?.()
+            }}
             className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:underline"
           >
             <ChevronUp size={14} />
