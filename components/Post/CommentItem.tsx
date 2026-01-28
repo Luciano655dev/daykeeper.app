@@ -235,6 +235,7 @@ export default function CommentItem({ c }: { c: PostComment }) {
                 onChange={setReply}
                 rows={2}
                 placeholder="Write a reply…"
+                renderPreview={false}
               />
               <div className="mt-2 flex items-center justify-end gap-2">
                 <button

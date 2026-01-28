@@ -107,6 +107,7 @@ export default function CommentsSection({ postId }: { postId: string }) {
           onChange={setText}
           rows={2}
           placeholder="Add a comment…"
+          renderPreview={false}
         />
         <div className="mt-2 flex items-center justify-end gap-2">
           <button
