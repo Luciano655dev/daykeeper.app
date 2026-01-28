@@ -68,12 +68,14 @@ export default function UserDayEvents({
   hasMore = false,
   loadingMore = false,
   onLoadMore,
+  onCollapse,
 }: {
   events?: any[]
   pagination?: PaginationMeta
   hasMore?: boolean
   loadingMore?: boolean
   onLoadMore?: () => void
+  onCollapse?: () => void
 }) {
   const PREVIEW_COUNT = 5
 
@@ -102,7 +104,10 @@ export default function UserDayEvents({
         <div className="flex justify-end">
           <button
             type="button"
-            onClick={() => setCollapsed(true)}
+            onClick={() => {
+              setCollapsed(true)
+              onCollapse?.()
+            }}
             className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:underline"
           >
             <ChevronUp size={14} />
