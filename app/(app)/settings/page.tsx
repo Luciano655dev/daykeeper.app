@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   ArrowRight,
   Ban,
@@ -17,9 +17,6 @@ import {
 
 import LogoutButton from "./LogoutButton"
 import { getTheme, setTheme, type ThemeMode } from "@/lib/theme"
-import { apiFetch } from "@/lib/authClient"
-import { API_URL } from "@/config"
-import FormAlert from "@/components/Form/FormAlert"
 
 function SectionBlock({
   title,
@@ -77,40 +74,7 @@ function SettingsRow({
 
 export default function SettingsPage() {
   const [mode, setMode] = useState<ThemeMode>("system")
-  const [deleteConfirm, setDeleteConfirm] = useState("")
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
-  const [deleteSuccess, setDeleteSuccess] = useState<string | null>(null)
-
   useEffect(() => setMode(getTheme()), [])
-
-  const canDelete = useMemo(
-    () => deleteConfirm.trim().toLowerCase() === "delete",
-    [deleteConfirm]
-  )
-
-  async function onDeleteAccount() {
-    if (!canDelete || deleteLoading) return
-    setDeleteLoading(true)
-    setDeleteError(null)
-    setDeleteSuccess(null)
-
-    try {
-      const res = await apiFetch(`${API_URL}/user`, { method: "DELETE" })
-      if (!res.ok) {
-        const text = await res.text().catch(() => "")
-        throw new Error(text || "Failed to delete account")
-      }
-
-      setDeleteSuccess("Account deleted. Redirecting to login...")
-      await fetch("/api/auth/logout", { method: "POST" })
-      window.location.href = "/login"
-    } catch (e: any) {
-      setDeleteError(e?.message || "Failed to delete account")
-    } finally {
-      setDeleteLoading(false)
-    }
-  }
 
   return (
     <main className="pb-20 lg:pb-0">
@@ -213,44 +177,12 @@ export default function SettingsPage() {
             title="Danger zone"
             subtitle="Irreversible actions"
           >
-            <div className="px-4 py-4">
-              <div className="text-sm font-semibold text-(--dk-ink)">
-                Delete account
-              </div>
-              <div className="text-xs text-(--dk-slate)">
-                This permanently removes your account, posts, and data.
-              </div>
-
-              <div className="mt-3 space-y-3">
-                <input
-                  type="text"
-                  value={deleteConfirm}
-                  onChange={(e) => setDeleteConfirm(e.target.value)}
-                  placeholder='Type "DELETE" to confirm'
-                  className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition bg-(--dk-paper) border-(--dk-ink)/10 focus:border-(--dk-sky) text-(--dk-ink)"
-                />
-
-                <button
-                  type="button"
-                  onClick={onDeleteAccount}
-                  disabled={!canDelete || deleteLoading}
-                  className="w-full rounded-xl px-4 py-3 text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{
-                    background: "#FEE2E2",
-                    color: "#991B1B",
-                    border: "1px solid rgba(239, 68, 68, 0.25)",
-                  }}
-                >
-                  {deleteLoading ? "Deleting..." : "Delete account"}
-                </button>
-
-                {deleteError ? <FormAlert>{deleteError}</FormAlert> : null}
-                {deleteSuccess ? (
-                  <FormAlert type="success">{deleteSuccess}</FormAlert>
-                ) : null}
-              </div>
-            </div>
-
+            <SettingsRow
+              title="Delete account"
+              subtitle="Request a code and confirm with your password"
+              href="/settings/delete-account"
+              icon={<Ban size={18} />}
+            />
             <div className="px-4 py-4 border-t border-(--dk-ink)/10">
               <div className="text-sm font-semibold text-(--dk-ink)">
                 Logout
