@@ -5,7 +5,7 @@
 
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { AVATAR_FALLBACK } from "@/components/search/searchUtils"
+import { AVATAR_FALLBACK } from "@/components/Search/searchUtils"
 
 export default function SearchUserResultRow({ user }: { user: any }) {
   const router = useRouter()
