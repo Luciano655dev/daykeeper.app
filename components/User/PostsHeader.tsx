@@ -172,9 +172,8 @@ export default function FeedHeader({
 
           <button
             onClick={() => onChangeDate(1)}
-            className="p-2 hover:bg-(--dk-mist) rounded-lg transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
+            className="p-2 hover:bg-(--dk-mist) rounded-lg transition cursor-pointer"
             aria-label="Next day"
-            disabled={isToday}
           >
             <ChevronRight size={20} className="text-(--dk-slate)" />
           </button>

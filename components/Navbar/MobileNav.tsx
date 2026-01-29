@@ -50,7 +50,6 @@ export default function MobileNav() {
                 <Icon
                   size={24}
                   className={active ? "stroke-[2.4]" : "stroke-2"}
-                  {...(active && !item.isCreate ? { fill: "currentColor" } : {})}
                 />
                 {showDot ? (
                   <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-(--dk-sky)" />

@@ -237,7 +237,7 @@ export default function DeleteEntityModal({
                 <button
                   type="button"
                   onClick={() => setSuccessOpen(false)}
-                  className="px-3 py-2 rounded-xl bg-(--dk-sky) text-white text-sm hover:opacity-95 transition"
+                  className="px-3 py-2 rounded-xl bg-red-600 text-white text-sm hover:opacity-95 transition"
                 >
                   OK
                 </button>
