@@ -193,7 +193,7 @@ export default function SearchDayKindRow({
     <div
       className={[
         "rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper)",
-        "hover:bg-(--dk-mist)/40 hover:border-(--dk-sky)/35 transition",
+        "hover:bg-(--dk-mist)/40 transition",
         "p-3",
       ].join(" ")}
       onClick={() => {

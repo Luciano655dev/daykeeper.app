@@ -134,7 +134,7 @@ export default function FollowersPage() {
                       return (
                         <div key={user._id} className="px-4 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-(--dk-sky)/30 bg-(--dk-mist)">
+                        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)">
                               <Image src={avatar} alt="" fill className="object-cover" />
                             </div>
 

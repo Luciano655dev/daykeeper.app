@@ -66,17 +66,26 @@ export default function PostDetailCard({ post }: Props) {
         <div className="mt-4 pt-3 border-t border-(--dk-ink)/10 flex items-center gap-6 text-(--dk-slate)">
           <button
             onClick={toggleLike}
-            disabled={likeBusy}
-            className={`flex items-center gap-2 text-sm transition disabled:opacity-60 ${
-              liked ? "text-(--dk-sky)" : "hover:text-(--dk-sky)"
-            }`}
+            className="flex items-center gap-2 text-sm transition hover:text-(--dk-sky)"
+            style={{ color: liked ? "var(--dk-sky)" : "var(--dk-slate)" }}
+            aria-busy={likeBusy}
           >
-            <Heart size={16} fill={liked ? "currentColor" : "none"} />
+            <Heart
+              size={16}
+              className="transition"
+              style={{
+                fill: liked ? "var(--dk-sky)" : "none",
+                color: liked ? "var(--dk-sky)" : "var(--dk-slate)",
+              }}
+            />
             <span className="font-medium">{likesCount}</span>
           </button>
 
-          <button className="flex items-center gap-2 text-sm hover:text-(--dk-sky) transition">
-            <MessageCircle size={16} />
+          <button
+            className="flex items-center gap-2 text-sm hover:text-(--dk-sky) transition"
+            style={{ color: "var(--dk-slate)" }}
+          >
+            <MessageCircle size={16} className="transition" />
             <span className="font-medium">{post.comments ?? 0}</span>
           </button>
         </div>

@@ -42,6 +42,7 @@ export default function SearchPostResultCard({ post }: { post: any }) {
   const [liked, setLiked] = useState(!!post?.userLiked)
   const [likesCount, setLikesCount] = useState<number>(Number(post?.likes ?? 0))
   const [likeBusy, setLikeBusy] = useState(false)
+  const likeColor = liked ? "var(--dk-sky)" : "var(--dk-slate)"
 
   async function toggleLike(e: React.MouseEvent) {
     e.preventDefault()
@@ -79,12 +80,13 @@ export default function SearchPostResultCard({ post }: { post: any }) {
   const content = post?.content ?? post?.data ?? ""
   const comments = Number(post?.comments ?? 0)
   const userCommented = !!post?.userCommented
+  const commentColor = userCommented ? "var(--dk-sky)" : "var(--dk-slate)"
 
   return (
     <div
       className={[
         "rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper)",
-        "hover:bg-(--dk-mist)/40 hover:border-(--dk-sky)/35 transition",
+        "hover:bg-(--dk-mist)/40 transition",
         "p-3 cursor-pointer",
       ].join(" ")}
       onClick={() => router.push(`/post/${encodeURIComponent(String(postId))}`)}
@@ -113,12 +115,11 @@ export default function SearchPostResultCard({ post }: { post: any }) {
       <div className="flex items-center gap-6 text-(--dk-slate) mt-3 pt-3 border-t border-(--dk-ink)/10">
         <button
           onClick={toggleLike}
-          disabled={likeBusy}
-          className={`flex items-center gap-1.5 text-xs cursor-pointer transition disabled:opacity-60 ${
-            liked ? "text-(--dk-sky)" : "hover:text-(--dk-sky)"
-          }`}
+          className="flex items-center gap-1.5 text-xs cursor-pointer transition hover:text-(--dk-sky)"
+          style={{ color: likeColor }}
           aria-pressed={liked}
           aria-label={liked ? "Unlike" : "Like"}
+          aria-busy={likeBusy}
         >
           <Heart
             size={14}
@@ -130,9 +131,8 @@ export default function SearchPostResultCard({ post }: { post: any }) {
         </button>
 
         <button
-          className={`flex items-center gap-1.5 text-xs cursor-pointer transition ${
-            userCommented ? "text-(--dk-sky)" : "hover:text-(--dk-sky)"
-          }`}
+          className="flex items-center gap-1.5 text-xs cursor-pointer transition hover:text-(--dk-sky)"
+          style={{ color: commentColor }}
           onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()

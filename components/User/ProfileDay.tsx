@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Plus } from "lucide-react"
 
 import PostsHeader from "@/components/User/PostsHeader"
+import ProfileDaySkeleton from "@/components/User/ProfileDaySkeleton"
 
 import UserDaySection from "@/components/UserDay/UserDaySection"
 import UserDayTasks from "@/components/UserDay/UserDayTasks"
@@ -14,6 +15,7 @@ import UserDayPosts from "@/components/UserDay/UserDayPosts"
 
 import { useProfileDay } from "@/hooks/useProfileDay"
 import { isSameDay, parseDDMMYYYY, startOfDay, toDDMMYYYY } from "@/lib/date"
+import { useDelayedRender } from "@/hooks/useDelayedRender"
 
 type Props = {
   username: string
@@ -152,6 +154,8 @@ export default function ProfileDaySections({ username, className }: Props) {
     (stats?.eventsCount ?? events.length) +
     (postsMeta?.totalCount ?? posts.length)
   const visibleEntriesCount = canView ? entriesCount : 0
+  const readyToShowSkeleton = useDelayedRender(200)
+  const showSkeleton = loading && readyToShowSkeleton
 
   return (
     <section className={className}>
@@ -166,9 +170,7 @@ export default function ProfileDaySections({ username, className }: Props) {
           onRetry={() => setDate(selectedDate)}
         />
 
-      {loading && (
-        <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
-      )}
+      {showSkeleton ? <ProfileDaySkeleton /> : null}
 
       {!loading && error && (
         <div className="px-4 py-6 text-sm text-red-500">{error}</div>

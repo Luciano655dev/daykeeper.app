@@ -80,8 +80,15 @@ export default function CommentItem({ c }: { c: PostComment }) {
   async function toggleLike() {
     if (likeBusy) return
     setLikeBusy(true)
-    setLiked((v) => !v)
-    setLikeCount((v) => (liked ? Math.max(0, v - 1) : v + 1))
+    const prevLiked = liked
+    const prevCount = likeCount
+
+    const nextLiked = !prevLiked
+    setLiked(nextLiked)
+    setLikeCount((v) => {
+      const base = Number.isFinite(v) ? v : 0
+      return nextLiked ? base + 1 : Math.max(0, base - 1)
+    })
 
     try {
       const res = await apiFetch(
@@ -93,8 +100,8 @@ export default function CommentItem({ c }: { c: PostComment }) {
         throw new Error(text || `Request failed (${res.status})`)
       }
     } catch {
-      setLiked((v) => !v)
-      setLikeCount((v) => (liked ? v + 1 : Math.max(0, v - 1)))
+      setLiked(prevLiked)
+      setLikeCount(prevCount)
     } finally {
       setLikeBusy(false)
     }
@@ -186,14 +193,21 @@ export default function CommentItem({ c }: { c: PostComment }) {
             <button
               type="button"
               onClick={toggleLike}
-              disabled={likeBusy}
               className={[
-                "inline-flex items-center gap-1 transition",
-                liked ? "text-(--dk-sky)" : "hover:text-(--dk-ink)",
+                "inline-flex items-center gap-1 transition hover:text-(--dk-sky)",
                 likeBusy ? "opacity-60" : "",
               ].join(" ")}
+              style={{ color: liked ? "var(--dk-sky)" : "var(--dk-slate)" }}
+              aria-busy={likeBusy}
             >
-              <Heart size={14} fill={liked ? "currentColor" : "none"} />
+              <Heart
+                size={14}
+                className="transition"
+                style={{
+                  fill: liked ? "var(--dk-sky)" : "none",
+                  color: liked ? "var(--dk-sky)" : "var(--dk-slate)",
+                }}
+              />
               <span>{likeCount}</span>
             </button>
 
@@ -202,16 +216,22 @@ export default function CommentItem({ c }: { c: PostComment }) {
               onClick={() => {
                 setReplyOpen((v) => !v)
               }}
-              className="inline-flex items-center gap-1 hover:text-(--dk-ink) transition"
+              className="inline-flex items-center gap-1 hover:text-(--dk-sky) transition"
+              style={{ color: "var(--dk-slate)" }}
             >
-              <MessageCircle size={14} />
+              <MessageCircle
+                size={14}
+                className="transition"
+                style={{ color: "var(--dk-slate)" }}
+              />
               <span>{replyCount}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowReplies((v) => !v)}
-              className="hover:text-(--dk-ink) transition"
+              className="hover:text-(--dk-sky) transition"
+              style={{ color: "var(--dk-slate)" }}
             >
               {showReplies ? "Hide replies" : "View replies"}
             </button>
@@ -311,8 +331,14 @@ function ReplyItem({ reply }: { reply: PostComment }) {
   async function toggleLike() {
     if (busy) return
     setBusy(true)
-    setLiked((v) => !v)
-    setLikeCount((v) => (liked ? Math.max(0, v - 1) : v + 1))
+    const prevLiked = liked
+    const prevCount = likeCount
+    const nextLiked = !prevLiked
+    setLiked(nextLiked)
+    setLikeCount((v) => {
+      const base = Number.isFinite(v) ? v : 0
+      return nextLiked ? base + 1 : Math.max(0, base - 1)
+    })
 
     try {
       const res = await apiFetch(
@@ -324,8 +350,8 @@ function ReplyItem({ reply }: { reply: PostComment }) {
         throw new Error(text || `Request failed (${res.status})`)
       }
     } catch {
-      setLiked((v) => !v)
-      setLikeCount((v) => (liked ? v + 1 : Math.max(0, v - 1)))
+      setLiked(prevLiked)
+      setLikeCount(prevCount)
     } finally {
       setBusy(false)
     }
@@ -353,17 +379,24 @@ function ReplyItem({ reply }: { reply: PostComment }) {
           <RichText text={String(reply.comment || "")} />
         </p>
         <div className="mt-1 flex items-center gap-3 text-xs text-(--dk-slate)">
-          <button
-            type="button"
-            onClick={toggleLike}
-            disabled={busy}
-            className={[
-              "inline-flex items-center gap-1 transition",
-              liked ? "text-(--dk-sky)" : "hover:text-(--dk-ink)",
-              busy ? "opacity-60" : "",
-            ].join(" ")}
-          >
-            <Heart size={12} fill={liked ? "currentColor" : "none"} />
+            <button
+              type="button"
+              onClick={toggleLike}
+              className={[
+                "inline-flex items-center gap-1 transition hover:text-(--dk-sky)",
+                busy ? "opacity-60" : "",
+              ].join(" ")}
+              style={{ color: liked ? "var(--dk-sky)" : "var(--dk-slate)" }}
+              aria-busy={busy}
+            >
+            <Heart
+              size={12}
+              className="transition"
+              style={{
+                fill: liked ? "var(--dk-sky)" : "none",
+                color: liked ? "var(--dk-sky)" : "var(--dk-slate)",
+              }}
+            />
             <span>{likeCount}</span>
           </button>
         </div>

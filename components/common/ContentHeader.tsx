@@ -155,8 +155,8 @@ export default function ContentHeader({
                     className={[
                       "w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition",
                       danger
-                        ? "text-red-600 hover:bg-red-50"
-                        : "hover:bg-(--dk-ink)/5",
+                        ? "text-(--dk-error) hover:bg-(--dk-error)/10"
+                        : "text-(--dk-ink) hover:bg-(--dk-ink)/5",
                     ].join(" ")}
                   >
                     {it.icon ? it.icon : null}

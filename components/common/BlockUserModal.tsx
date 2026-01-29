@@ -83,7 +83,7 @@ export default function BlockUserModal({ username, open, onClose }: Props) {
             >
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-2">
-                  <Ban size={18} className="text-(--dk-sky)" />
+                  <Ban size={18} className="text-(--dk-error)" />
                   <h2 className="text-(--dk-ink) font-semibold">Block user</h2>
                 </div>
                 <button
@@ -122,7 +122,8 @@ export default function BlockUserModal({ username, open, onClose }: Props) {
                   type="button"
                   onClick={confirmBlock}
                   disabled={busy}
-                  className="px-3 py-2 rounded-xl bg-(--dk-sky) text-white text-sm hover:opacity-95 transition disabled:opacity-60"
+                  className="px-3 py-2 rounded-xl text-white text-sm hover:opacity-95 transition disabled:opacity-60"
+                  style={{ background: "var(--dk-error)" }}
                 >
                   {busy ? "Blocking..." : "Block user"}
                 </button>
@@ -145,7 +146,7 @@ export default function BlockUserModal({ username, open, onClose }: Props) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-2 mb-2">
-                <Ban size={18} className="text-(--dk-sky)" />
+                <Ban size={18} className="text-(--dk-error)" />
                 <h2 className="text-(--dk-ink) font-semibold">User blocked</h2>
               </div>
 
@@ -157,7 +158,8 @@ export default function BlockUserModal({ username, open, onClose }: Props) {
                 <button
                   type="button"
                   onClick={() => setSuccessOpen(false)}
-                  className="px-3 py-2 rounded-xl bg-(--dk-sky) text-white text-sm hover:opacity-95 transition"
+                  className="px-3 py-2 rounded-xl text-white text-sm hover:opacity-95 transition"
+                  style={{ background: "var(--dk-error)" }}
                 >
                   OK
                 </button>

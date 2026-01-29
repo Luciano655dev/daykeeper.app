@@ -32,11 +32,11 @@ export default function SearchResultRow({
       }}
       className={[
         "w-full text-left rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) transition p-3",
-        "hover:bg-(--dk-mist) hover:border-(--dk-sky)/40",
+        "hover:bg-(--dk-mist)",
       ].join(" ")}
     >
       <div className="flex items-start gap-3">
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-(--dk-sky)/30 bg-(--dk-mist)">
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)">
           <Image src={avatar} alt="" fill className="object-cover" />
         </div>
 
@@ -79,7 +79,7 @@ export default function SearchResultRow({
         </div>
 
         {thumb ? (
-          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-(--dk-sky)/30 bg-(--dk-mist)">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)">
             <Image src={thumb} alt="" fill className="object-cover" />
           </div>
         ) : null}

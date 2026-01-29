@@ -15,6 +15,7 @@ import SearchBar from "@/components/Search/SearchBar"
 import SearchTypePills from "@/components/Search/SearchTypePills"
 import SearchFiltersRow from "@/components/Search/SearchFiltersRow"
 import SearchResultsList from "@/components/Search/SearchResultsList"
+import SearchResultsSkeleton from "@/components/Search/SearchResultsSkeleton"
 import {
   useSearch,
   type SearchType,
@@ -135,18 +136,28 @@ function SearchPageInner() {
           </div>
         </div>
 
-        {search.loadingFirst ? (
-          <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
-        ) : null}
+        {search.loadingFirst ? <SearchResultsSkeleton /> : null}
 
         {!search.loadingFirst && search.error ? (
           <div className="px-4 py-6 text-sm text-red-500">{search.error}</div>
         ) : null}
 
         {!search.loadingFirst && !search.error && !search.data.length ? (
-          <div className="px-4 py-6">
-            <div className="rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) p-4 text-sm text-(--dk-slate)">
-              No results.
+          <div className="px-4 py-5">
+            <div className="rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) p-6">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-xl bg-(--dk-mist) flex items-center justify-center text-(--dk-sky)">
+                  <ArrowLeft size={18} className="rotate-180" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-(--dk-ink)">
+                    No results found
+                  </div>
+                  <div className="text-xs text-(--dk-slate) mt-1">
+                    Try a different keyword or adjust filters.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         ) : null}

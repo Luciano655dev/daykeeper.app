@@ -30,32 +30,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-input,
-textarea,
-select {
-  color: var(--dk-ink) !important;
-  background-color: var(--dk-paper) !important;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: color-mix(in srgb, var(--dk-slate) 75%, transparent);
-}
-
-input.bg-transparent,
-textarea.bg-transparent,
-select.bg-transparent {
-  background-color: transparent !important;
-}
-
-input:-webkit-autofill,
-textarea:-webkit-autofill,
-select:-webkit-autofill {
-  -webkit-text-fill-color: var(--dk-ink) !important;
-  box-shadow: 0 0 0 1000px var(--dk-paper) inset !important;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
 button,
 a,
 summary,
@@ -64,13 +38,6 @@ input[type="button"],
 input[type="submit"],
 input[type="reset"] {
   cursor: pointer;
-}
-
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
-  color: var(--dk-ink);
 }
 
 button:disabled,

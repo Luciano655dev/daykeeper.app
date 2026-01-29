@@ -173,7 +173,7 @@ export default function FeedPostItem({ post, isLast }: Props) {
                         setMenuOpen(false)
                         router.push(`/post/${post.id}/edit`)
                       }}
-                      className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition hover:bg-(--dk-ink)/5"
+                      className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition text-(--dk-ink) hover:bg-(--dk-ink)/5"
                     >
                       <Pencil size={16} />
                       Edit post
@@ -185,7 +185,7 @@ export default function FeedPostItem({ post, isLast }: Props) {
                         setMenuOpen(false)
                         setDeleteOpen(true)
                       }}
-                      className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition text-red-600 hover:bg-red-50"
+                      className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition text-(--dk-error) hover:bg-(--dk-error)/10"
                     >
                       <Trash2 size={16} />
                       Delete post
@@ -198,7 +198,7 @@ export default function FeedPostItem({ post, isLast }: Props) {
                       setMenuOpen(false)
                       setReportOpen(true)
                     }}
-                    className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition hover:bg-(--dk-ink)/5"
+                    className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition text-(--dk-ink) hover:bg-(--dk-ink)/5"
                   >
                     <Flag size={16} />
                     Report post
@@ -218,26 +218,29 @@ export default function FeedPostItem({ post, isLast }: Props) {
         <div className="flex items-center gap-6 text-(--dk-slate) mt-3 pt-3 border-t border-(--dk-ink)/10">
           <button
             onClick={toggleLike}
-            disabled={likeBusy}
-            className={`flex items-center gap-1.5 text-xs cursor-pointer transition disabled:opacity-60 ${
-              liked ? "text-(--dk-sky)" : "hover:text-(--dk-sky)"
-            }`}
+            className="flex items-center gap-1.5 text-xs cursor-pointer transition hover:text-(--dk-sky)"
+            style={{ color: liked ? "var(--dk-sky)" : "var(--dk-slate)" }}
             aria-pressed={liked}
             aria-label={liked ? "Unlike" : "Like"}
+            aria-busy={likeBusy}
           >
             <Heart
               size={14}
               strokeWidth={2}
               className="transition"
-              fill={liked ? "currentColor" : "none"}
+              style={{
+                fill: liked ? "var(--dk-sky)" : "none",
+                color: liked ? "var(--dk-sky)" : "var(--dk-slate)",
+              }}
             />
             <span>{likesCount}</span>
           </button>
 
           <button
-            className={`flex items-center gap-1.5 text-xs cursor-pointer transition ${
-              post.userCommented ? "text-(--dk-sky)" : "hover:text-(--dk-sky)"
-            }`}
+            className="flex items-center gap-1.5 text-xs cursor-pointer transition hover:text-(--dk-sky)"
+            style={{
+              color: post.userCommented ? "var(--dk-sky)" : "var(--dk-slate)",
+            }}
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -248,7 +251,10 @@ export default function FeedPostItem({ post, isLast }: Props) {
               size={14}
               strokeWidth={2}
               className="transition"
-              fill={post.userCommented ? "currentColor" : "none"}
+              style={{
+                fill: post.userCommented ? "var(--dk-sky)" : "none",
+                color: post.userCommented ? "var(--dk-sky)" : "var(--dk-slate)",
+              }}
             />
             <span>{post.comments ?? 0}</span>
           </button>

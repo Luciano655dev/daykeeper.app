@@ -6,6 +6,8 @@ import { ArrowLeft, Pencil, Trash2, Flag, Ban } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
 
 import PostDetailCard from "@/components/Post/PostDetailCard"
+import PostDetailSkeleton from "@/components/Post/PostDetailSkeleton"
+import CommentsSkeleton from "@/components/Post/CommentsSkeleton"
 import CommentsSection from "@/components/Post/CommentsSection"
 import ContentHeader from "@/components/common/ContentHeader"
 import DeleteEntityModal from "@/components/common/DeleteEntityModal"
@@ -68,7 +70,10 @@ export default function PostPage() {
         </div>
 
         {loading && (
-          <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
+          <>
+            <PostDetailSkeleton />
+            <CommentsSkeleton />
+          </>
         )}
 
         {!loading && error && (

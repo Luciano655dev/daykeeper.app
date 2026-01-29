@@ -5,6 +5,8 @@ import { useParams, useRouter, notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 
 import ProfileHeader from "@/components/User/UserHeader"
+import ProfileHeaderSkeleton from "@/components/User/ProfileHeaderSkeleton"
+import ProfileDaySkeleton from "@/components/User/ProfileDaySkeleton"
 import ProfileDay from "@/components/User/ProfileDay"
 import { useUserProfile } from "@/hooks/useUserProfile"
 
@@ -59,9 +61,11 @@ export default function UserPage() {
         </div>
 
         {loading && (
-          <div className="px-4 py-6 text-sm text-(--dk-slate)">
-            Loading profile…
-          </div>
+          <>
+            <ProfileHeaderSkeleton />
+            <div className="h-px bg-(--dk-ink)/10" />
+            <ProfileDaySkeleton />
+          </>
         )}
 
         {!loading && user && (

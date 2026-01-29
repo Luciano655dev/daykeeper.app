@@ -157,7 +157,7 @@ export default function UserActionsMenu({
               setOpen(false)
               setBlockOpen(true)
             }}
-            className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-(--dk-ink)/5 transition text-(--dk-ink)"
+            className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 hover:bg-(--dk-error)/10 transition text-(--dk-error)"
           >
             Block user
           </button>

@@ -27,11 +27,11 @@ export default function SearchUserResultRow({ user }: { user: any }) {
       }}
       className={[
         "w-full text-left rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) transition p-3",
-        "hover:bg-(--dk-mist) hover:border-(--dk-sky)/40",
+        "hover:bg-(--dk-mist)",
       ].join(" ")}
     >
       <div className="flex items-center gap-3">
-        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-sm border border-(--dk-sky)/30 bg-(--dk-mist)">
+        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-sm border border-(--dk-ink)/10 bg-(--dk-mist)">
           <Image src={avatar} alt="" fill className="object-cover" />
         </div>
 
