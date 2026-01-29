@@ -15,7 +15,11 @@ import formatDDMMYYYY from "@/utils/formatDate"
 function formatPostedAt(s?: string) {
   if (!s) return ""
   const d = new Date(s)
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  const dd = String(d.getDate()).padStart(2, "0")
+  const mm = String(d.getMonth() + 1).padStart(2, "0")
+  const yyyy = d.getFullYear()
+  const time = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  return `${time} · ${dd}/${mm}/${yyyy}`
 }
 
 export default function SearchPostResultCard({ post }: { post: any }) {

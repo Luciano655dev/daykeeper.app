@@ -167,7 +167,12 @@ export default function UserDayTasks({
     setBusyMap((m) => ({ ...m, [id]: true }))
     setErrMap((m) => ({ ...m, [id]: null }))
 
-    qc.setQueriesData({ queryKey: ["userDay"] }, (old: any) => {
+    qc.setQueriesData(
+      {
+        predicate: (q) =>
+          Array.isArray(q.queryKey) && q.queryKey[0] === "userDay",
+      },
+      (old: any) => {
       if (!old) return old
       try {
         const nextOld = structuredClone(old)
@@ -214,7 +219,12 @@ export default function UserDayTasks({
 
       qc.invalidateQueries({ queryKey: ["userDay"] })
     } catch (err: any) {
-      qc.setQueriesData({ queryKey: ["userDay"] }, (old: any) => {
+      qc.setQueriesData(
+        {
+          predicate: (q) =>
+            Array.isArray(q.queryKey) && q.queryKey[0] === "userDay",
+        },
+        (old: any) => {
         if (!old) return old
         try {
           const nextOld = structuredClone(old)

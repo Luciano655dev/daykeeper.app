@@ -66,6 +66,13 @@ input[type="reset"] {
   cursor: pointer;
 }
 
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  color: var(--dk-ink);
+}
+
 button:disabled,
 input:disabled {
   cursor: not-allowed;
