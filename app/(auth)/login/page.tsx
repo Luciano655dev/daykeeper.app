@@ -100,7 +100,7 @@ function LoginForm() {
           ) : null}
 
           <FormField
-            label="Email"
+            label="Email or Username"
             inputProps={{
               type: "text",
               autoComplete: "email",

@@ -85,11 +85,11 @@ export default function RegisterPage() {
 
         <form className="space-y-4" onSubmit={onSubmit}>
           <FormField
-            label="Name"
+            label="Username"
             inputProps={{
               type: "text",
               autoComplete: "name",
-              placeholder: "Your name",
+              placeholder: "Your @username",
               value: username,
               onChange: (e: any) => setUsername(e.target.value),
             }}
