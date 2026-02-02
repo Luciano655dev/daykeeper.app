@@ -11,6 +11,7 @@ export type NotificationItem = {
   type?: string
   title?: string
   body?: string
+  route?: string
   data?: Record<string, any>
   read?: boolean
   created_at?: string

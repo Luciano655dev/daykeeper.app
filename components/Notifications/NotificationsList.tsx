@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, type ReactNode } from "react"
+import { useRouter } from "next/navigation"
 import {
   Bell,
   Heart,
@@ -39,19 +40,20 @@ function NotificationRow({
   item: NotificationItem
   isNew: boolean
 }) {
+  const router = useRouter()
   const icon =
     item.type && ICONS[item.type] ? ICONS[item.type] : <Bell size={16} />
   const stamp = formatStamp(item.created_at)
+  const route =
+    typeof item.route === "string" && item.route.trim()
+      ? item.route.trim()
+      : typeof item.data?.route === "string" && item.data.route.trim()
+        ? item.data.route.trim()
+        : ""
+  const isClickable = !!route
 
-  return (
-    <div
-      className={[
-        "flex gap-3 px-4 py-4 border-b border-(--dk-ink)/10 transition hover:bg-(--dk-sky)/8",
-        isNew
-          ? "bg-(--dk-sky)/15 border-l-2 border-(--dk-sky) pl-3"
-          : "bg-(--dk-paper)",
-      ].join(" ")}
-    >
+  const content = (
+    <>
       <div
         className={[
           "mt-0.5 flex h-9 w-9 items-center justify-center rounded-full text-(--dk-ink) relative",
@@ -88,8 +90,32 @@ function NotificationRow({
           </div>
         ) : null}
       </div>
-    </div>
+    </>
   )
+
+  const baseClass = [
+    "flex w-full text-left gap-3 px-4 py-4 border-b border-(--dk-ink)/10 transition hover:bg-(--dk-sky)/8",
+    isNew
+      ? "bg-(--dk-sky)/15 border-l-2 border-(--dk-sky) pl-3"
+      : "bg-(--dk-paper)",
+    isClickable
+      ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--dk-sky)/60"
+      : "",
+  ].join(" ")
+
+  if (isClickable) {
+    return (
+      <button
+        type="button"
+        onClick={() => router.push(route)}
+        className={baseClass}
+      >
+        {content}
+      </button>
+    )
+  }
+
+  return <div className={baseClass}>{content}</div>
 }
 
 export default function NotificationsList({
