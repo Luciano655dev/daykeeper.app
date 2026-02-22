@@ -2,6 +2,7 @@ import { queryClient } from "@/lib/queryClient"
 
 let accessToken: string | null = null
 let refreshing: Promise<string | null> | null = null
+const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"])
 
 export function setAccessToken(token: string | null) {
   accessToken = token
@@ -61,8 +62,21 @@ function mergeHeaders(initHeaders?: HeadersInit): Headers {
   return h
 }
 
+function shouldResetCache(method?: string) {
+  const normalized = (method || "GET").toUpperCase()
+  return MUTATION_METHODS.has(normalized)
+}
+
 // Use APi (ONLY for Post/Put/Delete) Use query for GET
 export async function apiFetch(url: string, init: RequestInit = {}) {
+  const requestMethod = (init.method || "GET").toUpperCase()
+  const maybeResetCache = (res: Response) => {
+    if (res.ok && shouldResetCache(requestMethod)) {
+      // Global invalidation avoids stale UI after create/update/delete operations.
+      void queryClient.invalidateQueries().catch(() => {})
+    }
+  }
+
   const doFetch = () =>
     fetch(url, {
       ...init,
@@ -71,7 +85,10 @@ export async function apiFetch(url: string, init: RequestInit = {}) {
     })
 
   let res = await doFetch()
-  if (res.status !== 401) return res
+  if (res.status !== 401) {
+    maybeResetCache(res)
+    return res
+  }
 
   const newToken = await refreshAccessToken()
   if (!newToken) {
@@ -85,6 +102,8 @@ export async function apiFetch(url: string, init: RequestInit = {}) {
     await logoutClient("Session expired")
     throw new Error("Session expired")
   }
+
+  maybeResetCache(res)
 
   return res
 }
