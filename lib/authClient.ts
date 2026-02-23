@@ -3,6 +3,7 @@ import { queryClient } from "@/lib/queryClient"
 let accessToken: string | null = null
 let refreshing: Promise<string | null> | null = null
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"])
+const KEEPALIVE_BODY_LIMIT_BYTES = 60_000
 
 export function setAccessToken(token: string | null) {
   accessToken = token
@@ -67,9 +68,46 @@ function shouldResetCache(method?: string) {
   return MUTATION_METHODS.has(normalized)
 }
 
+function getBodySize(body: RequestInit["body"]) {
+  if (body == null) return 0
+  if (typeof body === "string") return new TextEncoder().encode(body).length
+  if (
+    typeof URLSearchParams !== "undefined" &&
+    body instanceof URLSearchParams
+  ) {
+    return new TextEncoder().encode(body.toString()).length
+  }
+  if (typeof Blob !== "undefined" && body instanceof Blob) return body.size
+  if (typeof ArrayBuffer !== "undefined" && body instanceof ArrayBuffer) {
+    return body.byteLength
+  }
+  if (typeof ArrayBuffer !== "undefined" && ArrayBuffer.isView(body)) {
+    return body.byteLength
+  }
+
+  // FormData/ReadableStream are not safe candidates for keepalive here.
+  return null
+}
+
+function shouldUseBackgroundKeepalive(
+  method: string,
+  init: RequestInit,
+): boolean {
+  if (!MUTATION_METHODS.has(method)) return false
+  if (typeof window === "undefined") return false
+  if (init.keepalive !== undefined) return init.keepalive
+
+  const bodySize = getBodySize(init.body)
+  if (bodySize == null) return false
+
+  // Browsers enforce a small keepalive payload budget (~64 KB).
+  return bodySize <= KEEPALIVE_BODY_LIMIT_BYTES
+}
+
 // Use APi (ONLY for Post/Put/Delete) Use query for GET
 export async function apiFetch(url: string, init: RequestInit = {}) {
   const requestMethod = (init.method || "GET").toUpperCase()
+  const useKeepalive = shouldUseBackgroundKeepalive(requestMethod, init)
   const maybeResetCache = (res: Response) => {
     if (res.ok && shouldResetCache(requestMethod)) {
       // Global invalidation avoids stale UI after create/update/delete operations.
@@ -81,6 +119,7 @@ export async function apiFetch(url: string, init: RequestInit = {}) {
     fetch(url, {
       ...init,
       credentials: "include",
+      keepalive: useKeepalive,
       headers: mergeHeaders(init.headers),
     })
 
