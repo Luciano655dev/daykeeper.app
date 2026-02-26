@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Search, PlusSquare, Bell, User } from "lucide-react"
+import { Home, Search, Bell, User } from "lucide-react"
 
 import { useMe } from "@/lib/useMe"
 import { useNotifications } from "@/hooks/useNotifications"
+import CreateMenuButton from "@/components/Navbar/CreateMenuButton"
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/"
@@ -20,7 +21,7 @@ export default function MobileNav() {
   const NAV = [
     { href: "/", icon: Home },
     { href: "/search", icon: Search },
-    { href: "/post/create", icon: PlusSquare, isCreate: true },
+    { href: "/post/create", icon: null, isCreate: true },
     { href: "/notifications", icon: Bell },
     ...(me ? [{ href: `/${me.username}`, icon: User, isProfile: true }] : []),
   ]
@@ -30,9 +31,14 @@ export default function MobileNav() {
       <div className="flex items-center justify-around px-2 py-2">
         {NAV.map((item) => {
           const active = isActive(pathname, item.href)
-          const Icon = item.icon
 
           const showDot = item.href === "/notifications" && unreadCount > 0
+
+          if (item.isCreate) {
+            return <CreateMenuButton key="mobile-create" variant="mobile" />
+          }
+
+          const Icon = item.icon
 
           return (
             <Link

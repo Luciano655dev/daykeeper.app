@@ -11,6 +11,7 @@ import FormAlert from "@/components/Form/FormAlert"
 import PrivacyPicker, {
   type PrivacyValue,
 } from "@/components/common/PrivacyPicker"
+import { toDDMMYYYY } from "@/lib/date"
 
 type Privacy = PrivacyValue
 
@@ -66,6 +67,9 @@ function CreateEventForm() {
   const router = useRouter()
   const sp = useSearchParams()
   const qc = useQueryClient()
+
+  const goToTodayFeed = () =>
+    router.replace(`/?date=${encodeURIComponent(toDDMMYYYY(new Date()))}`)
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -131,7 +135,7 @@ function CreateEventForm() {
       }
 
       qc.invalidateQueries({ queryKey: ["userDay"] })
-      router.back()
+      goToTodayFeed()
     } catch (err: any) {
       setFormError(String(safeApiMessage(err)))
     } finally {

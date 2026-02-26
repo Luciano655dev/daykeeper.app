@@ -12,6 +12,7 @@ import PrivacyPicker, {
   type PrivacyValue,
 } from "@/components/common/PrivacyPicker"
 import { useDailyTasks } from "@/hooks/useDailyTasks"
+import { toDDMMYYYY } from "@/lib/date"
 
 type Privacy = PrivacyValue
 
@@ -67,6 +68,9 @@ function CreateTaskForm() {
   const router = useRouter()
   const sp = useSearchParams()
   const qc = useQueryClient()
+
+  const goToTodayFeed = () =>
+    router.replace(`/?date=${encodeURIComponent(toDDMMYYYY(new Date()))}`)
 
   const [title, setTitle] = useState("")
   const [privacy, setPrivacy] = useState<Privacy>("public")
@@ -158,7 +162,7 @@ function CreateTaskForm() {
       }
 
       qc.invalidateQueries({ queryKey: ["userDay"] })
-      router.back()
+      goToTodayFeed()
     } catch (err: any) {
       setFormError(String(safeApiMessage(err)))
     } finally {

@@ -192,7 +192,10 @@ export default function RightPanel() {
               {topNotifications.map((n) => (
                 <div key={n._id} className="px-4 py-3">
                   <div className="flex items-start gap-2">
-                    <Bell size={14} className="text-(--dk-sky) mt-0.5" />
+                    <Bell
+                      size={16}
+                      className="text-(--dk-sky) mt-0.5 shrink-0 flex-none"
+                    />
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-(--dk-ink) truncate">
                         {n.title || "Notification"}

@@ -14,6 +14,7 @@ import PrivacyPicker, {
   type PrivacyValue,
 } from "@/components/common/PrivacyPicker"
 import { useUploadQueue } from "@/lib/uploadQueue"
+import { toDDMMYYYY } from "@/lib/date"
 
 const MAX_FILES = 5
 
@@ -29,6 +30,10 @@ export default function CreatePostPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const trimmedData = data.trim()
+
+  function goToTodayFeed() {
+    router.replace(`/?date=${encodeURIComponent(toDDMMYYYY(new Date()))}`)
+  }
 
   function openPicker() {
     fileInputRef.current?.click()
@@ -79,7 +84,7 @@ export default function CreatePostPage() {
 
       if (files.length > 0) {
         enqueuePostUpload({ data, privacy, files })
-        router.back()
+        goToTodayFeed()
         return
       }
 
@@ -98,7 +103,7 @@ export default function CreatePostPage() {
         throw new Error(text || `Request failed (${res.status})`)
       }
 
-      router.back()
+      goToTodayFeed()
     } catch (err: any) {
       setError(err?.message || "Something went wrong.")
     } finally {

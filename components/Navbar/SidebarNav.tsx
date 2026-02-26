@@ -3,10 +3,11 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Search, Bell, PlusSquare, User, Settings } from "lucide-react"
+import { Home, Search, Bell, User, Settings } from "lucide-react"
 
 import { useMe } from "@/lib/useMe"
 import { useNotifications } from "@/hooks/useNotifications"
+import CreateMenuButton from "@/components/Navbar/CreateMenuButton"
 
 const NAV: any = [
   { label: "Feed", href: "/", icon: Home },
@@ -99,13 +100,7 @@ export default function SidebarNav() {
 
         {/* Create button */}
         <div className="px-3 py-2">
-          <Link
-            href="/post/create"
-            className="w-full bg-(--dk-sky) text-white py-3.5 rounded-xl flex justify-center gap-2"
-          >
-            <PlusSquare size={20} />
-            Create
-          </Link>
+          <CreateMenuButton variant="desktop" />
         </div>
       </div>
     </aside>
