@@ -28,6 +28,7 @@ export default function CreatePostPage() {
 
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const trimmedData = data.trim()
 
   function openPicker() {
     fileInputRef.current?.click()
@@ -71,9 +72,7 @@ export default function CreatePostPage() {
     setError(null)
 
     try {
-      if (!data.trim() && files.length === 0) {
-        throw new Error("Add some text or at least one file.")
-      }
+      if (!trimmedData) throw new Error("Post text is required.")
       if (files.length > MAX_FILES) {
         throw new Error(`You can only upload up to ${MAX_FILES} files.`)
       }
@@ -85,7 +84,7 @@ export default function CreatePostPage() {
       }
 
       const fd = new FormData()
-      fd.append("data", data.trim())
+      fd.append("data", trimmedData)
       fd.append("privacy", privacy)
       for (const f of files) fd.append("files", f)
 
@@ -160,7 +159,10 @@ export default function CreatePostPage() {
             <div className="mt-2">
               <RichTextarea
                 value={data}
-                onChange={setData}
+                onChange={(value) => {
+                  setData(value)
+                  if (error && value.trim()) setError(null)
+                }}
                 placeholder="What happened today?"
                 rows={4}
                 maxLength={1000}
@@ -183,7 +185,7 @@ export default function CreatePostPage() {
           <FormButton
             type="button"
             onClick={submit}
-            disabled={busy || files.length > MAX_FILES}
+            disabled={busy || files.length > MAX_FILES || !trimmedData}
           >
             {busy ? "Posting..." : "Create post"}
           </FormButton>
