@@ -39,13 +39,13 @@ export default function UserPage() {
 
   return (
     <main className="pb-20 lg:pb-0">
-      <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
-        <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md z-50">
-          <div className="h-1 w-full bg-(--dk-sky)/70" />
-          <div className="px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
+        <div className="sticky top-0 z-50 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+          <div className="h-0.5 w-full bg-(--dk-sky)/65" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-(--dk-mist) transition"
+              className="rounded-lg p-2 transition hover:bg-(--dk-mist)/75"
               aria-label="Back"
             >
               <ArrowLeft size={18} className="text-(--dk-ink)" />

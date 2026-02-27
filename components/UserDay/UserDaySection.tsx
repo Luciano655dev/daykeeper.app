@@ -12,7 +12,7 @@ export default function UserDaySection({
   children: React.ReactNode
 }) {
   return (
-    <section className="px-4 py-5">
+    <section className="px-4 py-5 sm:px-5">
       <div className="flex items-center justify-between">
         <div className="text-sm font-semibold text-(--dk-ink)">{title}</div>
         <div className="flex items-center gap-2">

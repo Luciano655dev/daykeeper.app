@@ -173,13 +173,13 @@ export default function ProfileDaySections({ username, className }: Props) {
       {showSkeleton ? <ProfileDaySkeleton /> : null}
 
       {!loading && error && (
-        <div className="px-4 py-6 text-sm text-red-500">{error}</div>
+        <div className="px-4 py-6 text-sm text-red-500 sm:px-5">{error}</div>
       )}
 
       {!loading && !error && (
         <>
           {!canView ? (
-            <div className="px-4 py-10 border-t border-(--dk-ink)/10">
+            <div className="border-t border-(--dk-ink)/10 px-4 py-10 sm:px-5">
               <div className="rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)/40 px-4 py-4 text-center">
                 <div className="text-sm font-semibold text-(--dk-ink)">
                   This account is private

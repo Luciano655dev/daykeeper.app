@@ -69,7 +69,7 @@ export default function UserDayNotes({
               setCollapsed(true)
               onCollapse?.()
             }}
-            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:text-(--dk-ink)"
           >
             <ChevronUp size={14} />
             Collapse
@@ -77,7 +77,7 @@ export default function UserDayNotes({
         </div>
       ) : null}
 
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {visible.map((n: any) => (
           <UserDayListRow
             key={n._id}

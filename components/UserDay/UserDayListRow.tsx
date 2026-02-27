@@ -23,7 +23,7 @@ export default function UserDayListRow({
 }: Props) {
   return (
     <div
-      className="py-3 px-2 -mx-2 rounded-lg hover:bg-(--dk-mist)/50 transition cursor-pointer"
+      className="-mx-2 cursor-pointer rounded-lg px-2 py-2.5 transition hover:bg-(--dk-mist)/35"
       onClick={onClick}
     >
       <div
@@ -35,10 +35,10 @@ export default function UserDayListRow({
         {/* lane marker + icon */}
         <div className="flex items-center gap-3 shrink-0">
           {showLane ? (
-            <div className="h-7 w-1 rounded-l-full rounded-r-md bg-(--dk-sky)/60" />
+            <div className="h-6 w-0.5 rounded-full bg-(--dk-sky)/45" />
           ) : null}
 
-          <div className="text-(--dk-sky) flex items-center">{leftIcon}</div>
+          <div className="flex items-center text-(--dk-sky)">{leftIcon}</div>
         </div>
 
         {/* content (vertically centered) */}
@@ -49,7 +49,7 @@ export default function UserDayListRow({
             </div>
           ) : null}
 
-          <div className="text-sm font-medium text-(--dk-ink) truncate leading-snug">
+          <div className="truncate text-sm font-medium leading-snug text-(--dk-ink)">
             {title}
           </div>
 

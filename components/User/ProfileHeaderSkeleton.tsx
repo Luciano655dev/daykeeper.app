@@ -2,7 +2,7 @@
 
 export default function ProfileHeaderSkeleton() {
   return (
-    <div className="px-4 pt-5 pb-4 animate-pulse">
+    <div className="animate-pulse px-4 pt-5 pb-4 sm:px-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
         <div className="flex items-start gap-4 min-w-0 flex-1">
           <div className="h-16 w-16 rounded-sm bg-(--dk-mist)" />

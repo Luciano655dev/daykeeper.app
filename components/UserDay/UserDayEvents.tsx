@@ -108,7 +108,7 @@ export default function UserDayEvents({
               setCollapsed(true)
               onCollapse?.()
             }}
-            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:text-(--dk-ink)"
           >
             <ChevronUp size={14} />
             Collapse
@@ -116,7 +116,7 @@ export default function UserDayEvents({
         </div>
       ) : null}
 
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {visible.map((ev: any) => {
           const { startText, endText } = formatEventTimeRange(
             ev.dateStartLocal || ev.dateStart,
@@ -148,7 +148,7 @@ export default function UserDayEvents({
                   <div
                     className={[
                       "inline-flex items-center gap-2",
-                      "rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)/35",
+                      "rounded-lg bg-(--dk-mist)/55",
                       "px-2.5 py-1 text-xs",
                       "max-w-full min-w-0",
                       "flex-wrap sm:flex-nowrap",

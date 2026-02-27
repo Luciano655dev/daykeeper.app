@@ -77,16 +77,16 @@ function TaskStatusPill({
       disabled={!clickable || busy}
       className={[
         "inline-flex items-center justify-center",
-        "h-9 w-9 rounded-xl border",
+        "h-8 w-8 rounded-lg",
         "transition",
         clickable ? "cursor-pointer" : "cursor-default",
         done
-          ? "bg-(--dk-sky)/10 border-(--dk-sky)/25 text-(--dk-sky)"
-          : "bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate)",
+          ? "bg-(--dk-sky)/12 text-(--dk-sky)"
+          : "bg-(--dk-mist)/55 text-(--dk-slate)",
         clickable && !done
-          ? "hover:bg-(--dk-mist)/60"
+          ? "hover:bg-(--dk-mist)/75"
           : clickable && done
-            ? "hover:bg-(--dk-sky)/15"
+            ? "hover:bg-(--dk-sky)/18"
             : "",
         busy ? "opacity-70" : "",
       ].join(" ")}
@@ -267,7 +267,7 @@ export default function UserDayTasks({
               setCollapsed(true)
               onCollapse?.()
             }}
-            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:text-(--dk-ink)"
           >
             <ChevronUp size={14} />
             Collapse
@@ -275,7 +275,7 @@ export default function UserDayTasks({
         </div>
       ) : null}
 
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {visible.map((t: any) => {
           const id = String(t?._id || "")
           const done = !!t.completed

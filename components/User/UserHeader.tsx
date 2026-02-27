@@ -118,7 +118,7 @@ export default function ProfileHeader({ user }: { user: any }) {
   }
 
   return (
-    <header className="px-4 pt-5 pb-4">
+    <header className="px-4 pt-5 pb-4 sm:px-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
         <div className="flex items-start gap-4 min-w-0 flex-1">
           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-(--dk-mist)/40">

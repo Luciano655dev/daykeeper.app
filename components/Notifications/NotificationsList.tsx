@@ -56,15 +56,15 @@ function NotificationRow({
     <>
       <div
         className={[
-          "mt-0.5 flex h-9 w-9 items-center justify-center rounded-full text-(--dk-ink) relative",
+          "relative mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg text-(--dk-ink)",
           isNew
-            ? "bg-(--dk-sky)/35 ring-1 ring-(--dk-sky)/50"
-            : "bg-(--dk-ink)/5",
+            ? "bg-(--dk-sky)/20"
+            : "bg-(--dk-mist)/70",
         ].join(" ")}
       >
         {icon}
         {isNew ? (
-          <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-(--dk-ink)" />
+          <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-(--dk-sky)" />
         ) : null}
       </div>
 
@@ -84,7 +84,7 @@ function NotificationRow({
 
         {isNew ? (
           <div className="mt-2 inline-flex items-center gap-2 text-[11px] text-(--dk-ink)">
-            <span className="px-2 py-0.5 rounded-full bg-(--dk-sky)/30 text-(--dk-ink)">
+            <span className="rounded-full bg-(--dk-sky)/18 px-2 py-0.5 text-(--dk-ink)">
               New
             </span>
           </div>
@@ -94,9 +94,9 @@ function NotificationRow({
   )
 
   const baseClass = [
-    "flex w-full text-left gap-3 px-4 py-4 border-b border-(--dk-ink)/10 transition hover:bg-(--dk-sky)/8",
+    "flex w-full gap-3 border-b border-(--dk-ink)/10 px-4 py-4 text-left transition hover:bg-(--dk-mist)/35 sm:px-5",
     isNew
-      ? "bg-(--dk-sky)/15 border-l-2 border-(--dk-sky) pl-3"
+      ? "bg-(--dk-sky)/10"
       : "bg-(--dk-paper)",
     isClickable
       ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--dk-sky)/60"
@@ -164,20 +164,20 @@ export default function NotificationsList({
   ])
 
   return (
-    <section className="border-t border-(--dk-ink)/10">
+    <section>
       {showSkeleton ? (
-        <div className="px-4 py-6 space-y-4 animate-pulse">
+        <div className="animate-pulse space-y-3 px-4 py-6 sm:px-5">
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={`skeleton-${i}`}
-              className="h-16 rounded-xl bg-(--dk-ink)/5"
+              className="h-16 rounded-lg bg-(--dk-mist)/60"
             />
           ))}
         </div>
       ) : null}
 
       {error && onRetry ? (
-        <div className="px-4 py-4">
+        <div className="px-4 py-4 sm:px-5">
           <button
             onClick={onRetry}
             className="text-xs underline text-(--dk-slate) hover:text-(--dk-ink)"
@@ -188,8 +188,10 @@ export default function NotificationsList({
       ) : null}
 
       {emptyState ? (
-        <div className="px-4 py-6 text-sm text-(--dk-slate)">
-          You have no notifications yet.
+        <div className="px-4 py-6 sm:px-5">
+          <div className="rounded-xl bg-(--dk-mist)/45 p-5 text-sm text-(--dk-slate)">
+            You have no notifications yet.
+          </div>
         </div>
       ) : null}
 
@@ -202,13 +204,13 @@ export default function NotificationsList({
       ))}
 
       {loadingMore ? (
-        <div className="px-4 py-4 text-sm text-(--dk-slate)">
+        <div className="px-4 py-4 text-sm text-(--dk-slate) sm:px-5">
           Loading more…
         </div>
       ) : null}
 
       {!loading && !loadingMore && !hasMore && items.length > 0 ? (
-        <div className="px-4 py-6 text-xs text-(--dk-slate)/80 text-center">
+        <div className="px-4 py-6 text-center text-xs text-(--dk-slate)/80 sm:px-5">
           You’re all caught up.
         </div>
       ) : null}
