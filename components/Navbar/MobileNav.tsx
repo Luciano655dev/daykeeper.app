@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, Search, Bell, User } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 import { useMe } from "@/lib/useMe"
 import { useNotifications } from "@/hooks/useNotifications"
@@ -13,12 +14,19 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/")
 }
 
+type NavItem = {
+  href: string
+  icon: LucideIcon | null
+  isCreate?: boolean
+  isProfile?: boolean
+}
+
 export default function MobileNav() {
   const pathname = usePathname()
   const me = useMe()
   const { unreadCount } = useNotifications()
 
-  const NAV = [
+  const NAV: NavItem[] = [
     { href: "/", icon: Home },
     { href: "/search", icon: Search },
     { href: "/post/create", icon: null, isCreate: true },
@@ -39,6 +47,7 @@ export default function MobileNav() {
           }
 
           const Icon = item.icon
+          if (!Icon) return null
 
           return (
             <Link
