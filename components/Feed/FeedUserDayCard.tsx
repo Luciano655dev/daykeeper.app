@@ -43,18 +43,18 @@ export default function FeedUserDayCard({
     )
   }
   return (
-    <div className="mb-4">
+    <div className="mb-2">
       <button
         type="button"
         onClick={openDay}
-        className="ml-8 w-[calc(100%-2rem)] text-left rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)/55 hover:bg-(--dk-mist)/75 transition px-4 py-2 cursor-pointer"
+        className="ml-7 w-[calc(100%-1.75rem)] cursor-pointer rounded-lg bg-(--dk-mist)/70 px-3 py-2 text-center transition hover:bg-(--dk-sky)/25"
       >
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-(--dk-slate)">
-          <span className="font-semibold tracking-wide text-(--dk-slate)">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-(--dk-slate)">
+          <span className="font-semibold tracking-[0.08em] text-(--dk-slate)">
             DAY
           </span>
 
-          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/20" />
+          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/25" />
 
           <span>
             <span className="font-semibold text-(--dk-ink)">
@@ -63,7 +63,7 @@ export default function FeedUserDayCard({
             entries
           </span>
 
-          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/20" />
+          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/25" />
 
           <span className="inline-flex items-center gap-1.5">
             <CheckSquare size={14} />
@@ -73,7 +73,7 @@ export default function FeedUserDayCard({
             tasks
           </span>
 
-          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/20" />
+          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/25" />
 
           <span className="inline-flex items-center gap-1.5">
             <Calendar size={14} />
@@ -83,7 +83,7 @@ export default function FeedUserDayCard({
             events
           </span>
 
-          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/20" />
+          <span className="h-1 w-1 rounded-full bg-(--dk-ink)/25" />
 
           <span className="inline-flex items-center gap-1.5">
             <List size={14} />

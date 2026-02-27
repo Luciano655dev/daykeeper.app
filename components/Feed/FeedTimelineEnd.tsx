@@ -8,8 +8,8 @@ type Props = {
 
 export default function FeedTimelineEnd({ dateLabel }: Props) {
   return (
-    <div className="text-center py-10 px-4">
-      <div className="w-14 h-14 bg-(--dk-mist) rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="px-4 py-10 text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-(--dk-mist)">
         <CheckCircle2 size={28} className="text-(--dk-sky)" />
       </div>
 

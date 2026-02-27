@@ -104,38 +104,38 @@ export default function FeedPostItem({ post, isLast }: Props) {
     <div className="relative">
       {/* dot */}
       <div
-        className="absolute top-5 w-3 h-3 rounded-full bg-(--dk-sky) shadow-sm"
+        className="absolute top-5 h-2.5 w-2.5 rounded-full bg-(--dk-sky)"
         style={{ left: 0, transform: "translateX(-50%)" }}
       />
 
       {/* connector */}
       {!isLast ? (
         <div
-          className="absolute top-8 w-px bg-(--dk-sky)/40"
+          className="absolute top-6 w-px bg-(--dk-sky)/40"
           style={{
             left: 0,
             transform: "translateX(-50%)",
-            height: "calc(100% + 1rem)",
+            height: "calc(100% + 0.25rem)",
           }}
         />
       ) : null}
 
       {/* card */}
       <div
-        className="ml-8 bg-(--dk-paper)/70 rounded-xl p-4 hover:bg-(--dk-paper)/90 transition cursor-pointer border border-(--dk-ink)/10"
+        className="ml-7 rounded-lg px-3 py-3 transition cursor-pointer hover:bg-(--dk-mist)/35"
         onClick={() => router.push(`/post/${post.id}`)}
       >
         {/* top row with menu */}
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Clock size={14} className="text-(--dk-slate)" />
-            <span className="text-xs font-medium text-(--dk-slate)">
+          <div className="flex items-center gap-2 flex-wrap text-[11px]">
+            <Clock size={13} className="text-(--dk-slate)" />
+            <span className="font-medium text-(--dk-slate)">
               {post?.time?.toLowerCase() || ""}
             </span>
 
             {post?.edited_at ? (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate)">
-                <Pencil size={14} className="text-(--dk-slate)" />
+              <span className="inline-flex items-center gap-1 font-medium text-(--dk-slate)">
+                <Pencil size={12} className="text-(--dk-slate)" />
                 <span>{formatDDMMYYYY(post.edited_at)}</span>
               </span>
             ) : null}
@@ -151,10 +151,10 @@ export default function FeedPostItem({ post, isLast }: Props) {
                 e.stopPropagation()
                 setMenuOpen((v) => !v)
               }}
-              className="p-2 rounded-lg hover:bg-(--dk-ink)/5 transition text-(--dk-slate)"
+              className="rounded-lg p-1.5 text-(--dk-slate) transition hover:bg-(--dk-paper) hover:text-(--dk-ink)"
               aria-label="Options"
             >
-              <MoreHorizontal size={18} />
+              <MoreHorizontal size={16} />
             </button>
 
             {menuOpen ? (
@@ -209,13 +209,13 @@ export default function FeedPostItem({ post, isLast }: Props) {
           </div>
         </div>
 
-        <p className="mt-2 text-(--dk-ink) text-[15px] leading-relaxed whitespace-pre-wrap">
+        <p className="mt-2 whitespace-pre-wrap text-[15px] leading-relaxed text-(--dk-ink)">
           <RichText text={String(post.content || "")} />
         </p>
 
         <FeedPostMediaStrip media={post.media} />
 
-        <div className="flex items-center gap-6 text-(--dk-slate) mt-3 pt-3 border-t border-(--dk-ink)/10">
+        <div className="mt-3 flex items-center gap-6 text-(--dk-slate)">
           <button
             onClick={toggleLike}
             className="flex items-center gap-1.5 text-xs cursor-pointer transition hover:text-(--dk-sky)"

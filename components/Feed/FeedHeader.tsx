@@ -101,14 +101,14 @@ export default function FeedHeader({
   }
 
   return (
-    <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md border-b border-(--dk-ink)/10 z-10">
-      <div className="h-1 w-full bg-(--dk-sky)/70" />
+    <div className="sticky top-0 z-10 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+      <div className="h-0.5 w-full bg-(--dk-sky)/65" />
 
-      <div className="px-4 py-3 sm:py-4">
+      <div className="px-4 py-3 sm:px-5 sm:py-4">
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={() => onChangeDate(-1)}
-            className="p-1.5 sm:p-2 hover:bg-(--dk-mist) rounded-lg transition cursor-pointer"
+            className="rounded-lg p-1.5 transition hover:bg-(--dk-mist)/75 cursor-pointer sm:p-2"
             aria-label="Previous day"
           >
             <ChevronLeft size={18} className="text-(--dk-slate)" />
@@ -118,14 +118,14 @@ export default function FeedHeader({
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
-              className="inline-flex flex-col items-center justify-center w-full rounded-lg hover:bg-(--dk-mist) transition py-1"
+              className="inline-flex w-full flex-col items-center justify-center rounded-lg py-1 transition hover:bg-(--dk-mist)/60"
               aria-label="Pick a date"
               aria-expanded={open}
             >
-              <p className="text-[13px] sm:text-sm font-semibold text-(--dk-ink)">
+              <p className="text-[13px] font-semibold text-(--dk-ink) sm:text-sm">
                 {formatDate(selectedDate)}
               </p>
-              <p className="text-[12px] sm:text-xs text-(--dk-slate)">
+              <p className="text-[11px] text-(--dk-slate) sm:text-xs">
                 {selectedDate.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -135,7 +135,7 @@ export default function FeedHeader({
             </button>
 
             {open && (
-              <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-55 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) shadow-lg p-3">
+              <div className="absolute left-1/2 mt-2 w-55 -translate-x-1/2 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) p-3 shadow-lg">
                 <p className="text-xs text-(--dk-slate) mb-2">Jump to date</p>
 
                 <input
@@ -178,7 +178,7 @@ export default function FeedHeader({
 
           <button
             onClick={() => onChangeDate(1)}
-            className="p-1.5 sm:p-2 hover:bg-(--dk-mist) rounded-lg transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
+            className="rounded-lg p-1.5 transition hover:bg-(--dk-mist)/75 disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer sm:p-2"
             aria-label="Next day"
             disabled={isToday}
           >
@@ -186,7 +186,7 @@ export default function FeedHeader({
           </button>
         </div>
 
-        <div className="mt-2 sm:mt-3 flex items-center justify-center gap-3">
+        <div className="mt-2 flex items-center justify-center gap-3 sm:mt-3">
           {loading ? (
             <span className="text-xs text-(--dk-slate)">Loading…</span>
           ) : error ? (
@@ -197,7 +197,7 @@ export default function FeedHeader({
               Failed to load. Click to retry.
             </button>
           ) : (
-            <span className="text-xs text-(--dk-slate) hidden sm:inline">
+            <span className="hidden text-xs text-(--dk-slate) sm:inline">
               {usersCount} users posted
             </span>
           )}

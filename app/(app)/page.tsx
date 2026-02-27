@@ -87,7 +87,7 @@ function FeedPageInner() {
   return (
     <>
       <main className="pb-20 lg:pb-0">
-        <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
+        <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
           <UploadStatusBar />
           <FeedHeader
             selectedDate={selectedDate}
@@ -121,7 +121,7 @@ export default function FeedPage() {
     <Suspense
       fallback={
         <main className="pb-20 lg:pb-0">
-          <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
+          <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
             <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
           </div>
         </main>

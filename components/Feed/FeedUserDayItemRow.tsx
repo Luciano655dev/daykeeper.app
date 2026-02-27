@@ -177,24 +177,24 @@ export default function FeedUserDayItemRow({
     <div className="relative">
       {/* dot */}
       <div
-        className="absolute top-5 w-3 h-3 rounded-full bg-(--dk-sky) shadow-sm"
+        className="absolute top-5 h-2.5 w-2.5 rounded-full bg-(--dk-sky)"
         style={{ left: 0, transform: "translateX(-50%)" }}
       />
 
       {/* connector */}
       {!isLast ? (
         <div
-          className="absolute top-8 w-px bg-(--dk-sky)/40"
+          className="absolute top-6 w-px bg-(--dk-sky)/40"
           style={{
             left: 0,
             transform: "translateX(-50%)",
-            height: "calc(100% + 1rem)",
+            height: "calc(100% + 0.25rem)",
           }}
         />
       ) : null}
 
       <div
-        className="ml-8 bg-(--dk-paper)/70 rounded-xl p-3 hover:bg-(--dk-paper)/90 transition border border-(--dk-ink)/10"
+        className="ml-7 rounded-lg px-3 py-2 transition hover:bg-(--dk-mist)/35"
         onClick={() => {
           if (href) router.push(href)
         }}

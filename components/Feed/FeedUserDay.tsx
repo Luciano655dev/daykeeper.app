@@ -64,39 +64,39 @@ export default function FeedUserDay({
   }, [])
 
   return (
-    <div className="relative">
+    <section className="relative px-3 sm:px-4">
       <div
-        className="flex items-start gap-4 px-4 mb-2 cursor-pointer"
+        className="group flex items-start gap-3 px-2 pb-3 cursor-pointer"
         onClick={() => router.push(`/${username}`)}
       >
         <Image
           src={avatarSrc}
           alt={username}
-          width={48}
-          height={48}
-          className="h-12 w-12 rounded-sm object-cover"
+          width={44}
+          height={44}
+          className="h-11 w-11 rounded-sm object-cover ring-1 ring-(--dk-ink)/10"
         />
 
-        <div className="flex-1 min-w-0 pt-1">
+        <div className="flex-1 min-w-0 pt-0.5">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2 min-w-0">
-                <h3 className="font-bold text-(--dk-ink) truncate">
+                <h3 className="truncate text-[15px] font-semibold text-(--dk-ink)">
                   {displayName}
                 </h3>
-                <span className="text-[11px] px-2 py-0.5 rounded-full border border-(--dk-ink)/10 bg-(--dk-mist)/70 text-(--dk-slate)">
-                  {userDay.user_info.currentStreak || 0} Days
+                <span className="rounded-md bg-(--dk-mist)/80 px-1.5 py-0.5 text-[11px] font-medium text-(--dk-slate)">
+                  {userDay.user_info.currentStreak || 0}d
                 </span>
               </div>
 
-              <p className="text-sm text-(--dk-slate) truncate">@{username}</p>
+              <p className="truncate text-xs text-(--dk-slate)">@{username}</p>
             </div>
 
             {/* 3-dots + menu */}
             <div ref={menuRef} className="relative shrink-0">
               <button
                 type="button"
-                className="h-9 w-9 grid place-items-center rounded-lg bg-(--dk-paper)/60 hover:bg-(--dk-paper) transition text-(--dk-slate) hover:text-(--dk-ink) cursor-pointer"
+                className="grid h-8 w-8 place-items-center rounded-lg text-(--dk-slate) transition hover:bg-(--dk-mist)/70 hover:text-(--dk-ink) cursor-pointer"
                 aria-label="More options"
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
@@ -162,7 +162,7 @@ export default function FeedUserDay({
       >
         <FeedUserDayCard userDay={userDay} selectedDate={selectedDate} />
 
-        <div className="space-y-4">
+        <div className="space-y-1">
           {items.map((item: any, idx: any) =>
             item?.type === "post" ? (
               <FeedPostItem
@@ -239,6 +239,6 @@ export default function FeedUserDay({
         open={blockOpen}
         onClose={() => setBlockOpen(false)}
       />
-    </div>
+    </section>
   )
 }

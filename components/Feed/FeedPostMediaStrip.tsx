@@ -43,7 +43,7 @@ export default function FeedPostMediaStrip({ media }: { media?: FeedMedia[] }) {
             className="
               relative shrink-0 snap-start
               h-44 w-72 sm:h-52 sm:w-80
-              rounded-xl overflow-hidden
+              rounded-lg overflow-hidden
               border border-(--dk-ink)/10
               bg-(--dk-mist)
               focus:outline-none focus:ring-2 focus:ring-(--dk-sky)/60

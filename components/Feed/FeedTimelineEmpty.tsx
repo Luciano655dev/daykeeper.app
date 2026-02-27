@@ -4,11 +4,11 @@ import { Clock } from "lucide-react"
 
 export default function FeedTimelineEmpty() {
   return (
-    <div className="text-center py-16 px-4">
-      <div className="w-16 h-16 bg-(--dk-mist) rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="px-4 py-16 text-center">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-(--dk-mist)">
         <Clock size={32} className="text-(--dk-sky)" />
       </div>
-      <h3 className="text-lg font-semibold text-(--dk-ink) mb-2">
+      <h3 className="mb-2 text-lg font-semibold text-(--dk-ink)">
         No posts for this day
       </h3>
       <p className="text-sm text-(--dk-slate)">
