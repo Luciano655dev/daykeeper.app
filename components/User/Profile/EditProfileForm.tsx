@@ -15,13 +15,13 @@ export default function EditProfileForm() {
 
   return (
     <main className="pb-20 lg:pb-0">
-      <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
-        <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md z-10">
-          <div className="h-1 w-full bg-(--dk-sky)/70" />
-          <div className="px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
+        <div className="sticky top-0 z-10 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+          <div className="h-0.5 w-full bg-(--dk-sky)/65" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
             <button
               onClick={p.goBack}
-              className="p-2 rounded-lg hover:bg-(--dk-mist) transition"
+              className="rounded-lg p-2 transition hover:bg-(--dk-mist)/75"
               aria-label="Back"
               type="button"
             >
@@ -40,25 +40,25 @@ export default function EditProfileForm() {
         </div>
 
         {p.loading && (
-          <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
+          <div className="px-4 py-6 text-sm text-(--dk-slate) sm:px-5">Loading…</div>
         )}
 
         {!p.loading && p.error && (
-          <div className="px-4 py-4">
+          <div className="px-4 py-4 sm:px-5">
             <FormAlert>{p.error}</FormAlert>
           </div>
         )}
 
         {!p.loading && p.success && (
-          <div className="px-4 py-4">
-            <div className="rounded-2xl border border-(--dk-sky)/20 bg-(--dk-sky)/10 px-4 py-3 text-sm text-(--dk-sky)">
+          <div className="px-4 py-4 sm:px-5">
+            <div className="rounded-lg bg-(--dk-sky)/12 px-4 py-3 text-sm text-(--dk-sky)">
               {p.success}
             </div>
           </div>
         )}
 
         {!p.loading && !p.error && (
-          <form className="px-4 py-6 space-y-5" onSubmit={p.onSave}>
+          <form className="space-y-5 px-4 py-5 sm:px-5" onSubmit={p.onSave}>
             <AvatarPicker
               fileRef={p.fileRef}
               avatarSrc={p.avatarSrc}

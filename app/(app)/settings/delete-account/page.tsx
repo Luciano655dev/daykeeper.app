@@ -56,8 +56,10 @@ export default function DeleteAccountPage() {
 
       setCodeSent(true)
       setSuccess(payload?.message || "Deletion code sent to your email.")
-    } catch (e: any) {
-      setError(e?.message || "Failed to send deletion code")
+    } catch (e: unknown) {
+      const message =
+        e instanceof Error ? e.message : "Failed to send deletion code"
+      setError(message)
     } finally {
       setRequesting(false)
     }
@@ -88,8 +90,9 @@ export default function DeleteAccountPage() {
       setSuccess(payload?.message || "Account deleted. Redirecting to login…")
       await fetch("/api/auth/logout", { method: "POST" })
       window.location.href = "/login"
-    } catch (e: any) {
-      setError(e?.message || "Failed to delete account")
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to delete account"
+      setError(message)
     } finally {
       setDeleting(false)
     }
@@ -97,13 +100,13 @@ export default function DeleteAccountPage() {
 
   return (
     <main className="pb-20 lg:pb-0">
-      <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
-        <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md z-20">
-          <div className="h-1 w-full bg-(--dk-sky)/70" />
-          <div className="px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
+        <div className="sticky top-0 z-20 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+          <div className="h-0.5 w-full bg-(--dk-sky)/65" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-(--dk-mist) transition"
+              className="rounded-lg p-2 transition hover:bg-(--dk-mist)/75"
               aria-label="Back"
             >
               <ArrowLeft size={18} className="text-(--dk-ink)" />
@@ -120,10 +123,10 @@ export default function DeleteAccountPage() {
           </div>
         </div>
 
-        <div className="px-4 py-4 space-y-4">
-          <div className="rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) p-4">
+        <div className="space-y-4 px-4 py-4 sm:px-5">
+          <div className="rounded-xl bg-(--dk-mist)/45 p-4">
             <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-(--dk-error)/15 text-(--dk-error) flex items-center justify-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-(--dk-error)/12 text-(--dk-error)">
                 <Ban size={18} />
               </div>
               <div className="min-w-0">
@@ -138,7 +141,7 @@ export default function DeleteAccountPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) p-4 space-y-3">
+          <div className="space-y-3 rounded-xl bg-(--dk-mist)/30 p-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-(--dk-ink)">
               <MailCheck size={16} className="text-(--dk-sky)" />
               Request deletion code
@@ -151,7 +154,7 @@ export default function DeleteAccountPage() {
               type="button"
               onClick={onRequestDeleteCode}
               disabled={requesting || deleting}
-              className="w-full rounded-xl px-4 py-3 text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed border border-(--dk-ink)/10 bg-(--dk-paper) hover:bg-(--dk-mist) text-(--dk-ink)"
+              className="w-full rounded-lg bg-(--dk-paper)/80 px-4 py-3 text-sm font-medium text-(--dk-ink) transition disabled:cursor-not-allowed disabled:opacity-60 hover:bg-(--dk-mist)/70"
             >
               {requesting
                 ? "Sending code..."
@@ -161,7 +164,7 @@ export default function DeleteAccountPage() {
             </button>
           </div>
 
-          <div className="rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) p-4 space-y-3">
+          <div className="space-y-3 rounded-xl bg-(--dk-mist)/30 p-4">
             <div className="text-sm font-semibold text-(--dk-ink)">
               Confirm deletion
             </div>
@@ -173,7 +176,7 @@ export default function DeleteAccountPage() {
                 placeholder="6 digit code"
                 autoComplete="one-time-code"
                 inputMode="numeric"
-                className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition bg-(--dk-paper) border-(--dk-ink)/10 focus:border-(--dk-sky) text-(--dk-ink)"
+                className="w-full rounded-lg border border-transparent bg-(--dk-paper)/80 px-4 py-3 text-sm text-(--dk-ink) outline-none transition focus:border-(--dk-sky)/35"
               />
               <input
                 type="password"
@@ -181,7 +184,7 @@ export default function DeleteAccountPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 autoComplete="new-password"
-                className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition bg-(--dk-paper) border-(--dk-ink)/10 focus:border-(--dk-sky) text-(--dk-ink)"
+                className="w-full rounded-lg border border-transparent bg-(--dk-paper)/80 px-4 py-3 text-sm text-(--dk-ink) outline-none transition focus:border-(--dk-sky)/35"
               />
               <input
                 type="password"
@@ -189,14 +192,14 @@ export default function DeleteAccountPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm password"
                 autoComplete="new-password"
-                className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition bg-(--dk-paper) border-(--dk-ink)/10 focus:border-(--dk-sky) text-(--dk-ink)"
+                className="w-full rounded-lg border border-transparent bg-(--dk-paper)/80 px-4 py-3 text-sm text-(--dk-ink) outline-none transition focus:border-(--dk-sky)/35"
               />
             </div>
             <button
               type="button"
               onClick={onDeleteAccount}
               disabled={!canDelete || deleting}
-              className="w-full rounded-xl px-4 py-3 text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full rounded-lg px-4 py-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60"
               style={{
                 background:
                   "color-mix(in srgb, var(--dk-error) 18%, var(--dk-paper))",

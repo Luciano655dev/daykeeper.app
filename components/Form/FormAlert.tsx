@@ -29,7 +29,7 @@ export default function FormAlert({
 }) {
   return (
     <div
-      className="mb-4 rounded-xl border px-4 py-3 text-sm"
+      className="mb-4 rounded-lg px-4 py-3 text-sm"
       style={styles[type]}
     >
       {children}

@@ -15,10 +15,9 @@ export default function FormSocialButton({
   return (
     <button
       type="button"
-      className="flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition"
+      className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition"
       style={{
-        background: brand.mist,
-        borderColor: "color-mix(in srgb, var(--dk-ink) 12%, transparent)",
+        background: "color-mix(in srgb, var(--dk-mist) 85%, var(--dk-paper))",
         color: brand.ink,
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? "40%" : "100%",

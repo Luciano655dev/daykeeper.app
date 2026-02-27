@@ -2,7 +2,7 @@
 "use client"
 
 import Image from "next/image"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { ImagePlus, UploadCloud, Plus, X } from "lucide-react"
 import { useObjectUrlPreviews } from "./UseObjectUrlPreviews"
 
@@ -55,7 +55,7 @@ export default function MediaDropzone({
         <button
           type="button"
           onClick={onPick}
-          className="hidden sm:inline-flex items-center gap-2 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-sky) hover:underline"
+          className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-(--dk-mist)/55 px-3 py-2 text-sm text-(--dk-sky)"
         >
           <Plus size={16} />
           Add
@@ -86,7 +86,7 @@ export default function MediaDropzone({
         }}
         onDrop={onDrop}
         className={[
-          "rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) overflow-hidden transition",
+          "overflow-hidden rounded-xl bg-(--dk-mist)/30 transition",
           dragOver ? "ring-2 ring-(--dk-sky)/60" : "",
         ].join(" ")}
       >
@@ -115,7 +115,7 @@ function EmptyState({
   return (
     <div className="p-6 sm:p-10">
       <div className="mx-auto max-w-md text-center">
-        <div className="mx-auto h-14 w-14 rounded-2xl border border-(--dk-ink)/10 bg-(--dk-sky)/10 flex items-center justify-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-(--dk-sky)/10">
           {dragOver ? (
             <UploadCloud size={22} className="text-(--dk-sky)" />
           ) : (
@@ -130,7 +130,7 @@ function EmptyState({
           Click anywhere here, or drag files in. Up to {maxFiles}.
         </div>
 
-        <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-sky)">
+        <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-(--dk-paper)/75 px-3 py-2 text-sm text-(--dk-sky)">
           <Plus size={16} />
           Choose files
         </div>
@@ -156,7 +156,7 @@ function GridState({
         {previews.map((p, idx) => (
           <div
             key={p.url}
-            className="relative overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper)"
+            className="relative overflow-hidden rounded-lg bg-(--dk-paper)/80"
           >
             <div className="aspect-square">
               {p.kind === "video" ? (
@@ -201,8 +201,8 @@ function GridState({
               onPick()
             }}
             className={[
-              "aspect-square rounded-xl border border-dashed border-(--dk-ink)/20",
-              "bg-(--dk-paper) hover:bg-(--dk-ink)/3 transition",
+              "aspect-square rounded-lg",
+              "bg-(--dk-paper)/70 hover:bg-(--dk-mist)/60 transition",
               "flex flex-col items-center justify-center gap-2 text-(--dk-slate)",
             ].join(" ")}
           >

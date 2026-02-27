@@ -172,13 +172,13 @@ function CreateTaskForm() {
 
   return (
     <main className="pb-20 lg:pb-0">
-      <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
-        <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md">
-          <div className="h-1 w-full bg-(--dk-sky)/70" />
-          <div className="px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
+        <div className="sticky top-0 z-10 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+          <div className="h-0.5 w-full bg-(--dk-sky)/65" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-(--dk-mist) transition"
+              className="rounded-lg p-2 transition hover:bg-(--dk-mist)/75"
               aria-label="Back"
               disabled={busy}
             >
@@ -196,7 +196,7 @@ function CreateTaskForm() {
           </div>
         </div>
 
-        <div className="px-4 py-4 space-y-4">
+        <div className="space-y-4 px-4 py-4 sm:px-5">
           {formError ? <FormAlert type="error">{formError}</FormAlert> : null}
 
           <div className="space-y-2">
@@ -206,7 +206,7 @@ function CreateTaskForm() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Task title"
-              className="w-full rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink)"
+              className="w-full rounded-lg border border-transparent bg-(--dk-mist)/45 px-3 py-2 text-sm text-(--dk-ink)"
             />
           </div>
 
@@ -217,7 +217,7 @@ function CreateTaskForm() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink)"
+                className="mt-2 w-full rounded-lg border border-transparent bg-(--dk-mist)/45 px-3 py-2 text-sm text-(--dk-ink)"
               />
             </div>
             <div>
@@ -226,7 +226,7 @@ function CreateTaskForm() {
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink)"
+                className="mt-2 w-full rounded-lg border border-transparent bg-(--dk-mist)/45 px-3 py-2 text-sm text-(--dk-ink)"
               />
             </div>
           </div>
@@ -236,10 +236,10 @@ function CreateTaskForm() {
               type="button"
               onClick={() => setCompleted((v) => !v)}
               className={[
-                "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition",
+                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition",
                 completed
-                  ? "bg-(--dk-sky)/10 border-(--dk-sky)/25 text-(--dk-sky)"
-                  : "bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate)",
+                  ? "bg-(--dk-sky)/12 text-(--dk-sky)"
+                  : "bg-(--dk-mist)/55 text-(--dk-slate)",
               ].join(" ")}
             >
               {completed ? <CheckSquare2 size={18} /> : <Square size={18} />}
@@ -250,10 +250,10 @@ function CreateTaskForm() {
               type="button"
               onClick={() => setDaily((v) => !v)}
               className={[
-                "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition",
+                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition",
                 daily
-                  ? "bg-(--dk-sky)/10 border-(--dk-sky)/25 text-(--dk-sky)"
-                  : "bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate)",
+                  ? "bg-(--dk-sky)/12 text-(--dk-sky)"
+                  : "bg-(--dk-mist)/55 text-(--dk-slate)",
               ].join(" ")}
             >
               <ClipboardList size={18} />
@@ -268,7 +268,7 @@ function CreateTaskForm() {
               type="button"
               onClick={() => router.back()}
               disabled={busy}
-              className="px-3 py-2 rounded-xl border border-(--dk-ink)/10 hover:bg-(--dk-ink)/5 text-sm transition disabled:opacity-60"
+              className="rounded-lg bg-(--dk-mist)/55 px-3 py-2 text-sm transition hover:bg-(--dk-mist)/80 disabled:opacity-60"
             >
               Cancel
             </button>
@@ -277,7 +277,7 @@ function CreateTaskForm() {
               type="button"
               onClick={onSave}
               disabled={!canSave}
-              className="px-3 py-2 rounded-xl bg-(--dk-sky) text-white text-sm hover:opacity-95 transition disabled:opacity-60"
+              className="rounded-lg bg-(--dk-sky) px-3 py-2 text-sm text-white transition hover:opacity-95 disabled:opacity-60"
             >
               {busy ? "Saving..." : "Create task"}
             </button>
@@ -323,7 +323,7 @@ function CreateTaskForm() {
                     <button
                       type="button"
                       onClick={() => applyTemplate(t)}
-                      className="px-3 py-2 rounded-xl text-xs font-medium bg-(--dk-sky)/15 text-(--dk-ink) hover:bg-(--dk-sky)/25 transition"
+                      className="rounded-lg bg-(--dk-mist)/65 px-3 py-2 text-xs font-medium text-(--dk-ink) transition hover:bg-(--dk-sky)/14"
                     >
                       Use
                     </button>
@@ -351,7 +351,7 @@ export default function CreateTaskPage() {
     <Suspense
       fallback={
         <main className="pb-20 lg:pb-0">
-          <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
+          <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
             <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
           </div>
         </main>

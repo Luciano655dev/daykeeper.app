@@ -54,10 +54,10 @@ export default function TimeZonePicker({
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={[
-          "w-full h-11 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-4",
+          "h-11 w-full rounded-lg border border-transparent bg-(--dk-mist)/45 px-4",
           "text-sm text-(--dk-ink) flex items-center gap-3",
           "outline-none transition",
-          open ? "border-(--dk-sky)" : "",
+          open ? "border-(--dk-sky)/35 bg-(--dk-paper)" : "",
         ].join(" ")}
       >
         <span className="text-base leading-none">{selected?.flag || "🌐"}</span>
@@ -71,14 +71,14 @@ export default function TimeZonePicker({
       </button>
 
       {open && (
-        <div className="absolute z-20 mt-2 w-full rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) shadow-sm overflow-hidden">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper)">
           <div className="p-2 border-b border-(--dk-ink)/10">
             <div className="relative">
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search time zones..."
-                className="w-full h-10 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) pl-10 pr-3 text-sm text-(--dk-ink) outline-none focus:border-(--dk-sky)"
+                className="h-10 w-full rounded-lg border border-transparent bg-(--dk-mist)/45 pl-10 pr-3 text-sm text-(--dk-ink) outline-none focus:border-(--dk-sky)/35 focus:bg-(--dk-paper)"
                 autoFocus
               />
               <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-(--dk-ink)/40">
@@ -104,7 +104,7 @@ export default function TimeZonePicker({
                   }}
                   className={[
                     "w-full px-4 py-3 text-left flex items-center gap-3",
-                    "hover:bg-(--dk-ink)/5 transition",
+                    "hover:bg-(--dk-mist)/40 transition",
                     opt.value === value ? "bg-(--dk-sky)/10" : "",
                   ].join(" ")}
                 >

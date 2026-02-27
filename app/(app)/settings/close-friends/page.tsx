@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, UserCheck, UserPlus } from "lucide-react"
+import { ArrowLeft, Search, UserCheck, UserPlus } from "lucide-react"
 
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
@@ -29,6 +29,7 @@ export default function CloseFriendsPage() {
   const [removedUsernames, setRemovedUsernames] = useState<Set<string>>(
     () => new Set()
   )
+  const [query, setQuery] = useState("")
 
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
@@ -73,22 +74,30 @@ export default function CloseFriendsPage() {
         else next.add(username)
         return next
       })
-    } catch (e: any) {
-      setActionError(e?.message || "Failed to update close friends")
+    } catch (e: unknown) {
+      const message =
+        e instanceof Error ? e.message : "Failed to update close friends"
+      setActionError(message)
     } finally {
       setBusyUsername(null)
     }
   }
 
+  function goToUserSearch() {
+    const q = query.trim()
+    if (!q) return
+    router.push(`/search?type=User&q=${encodeURIComponent(q)}`)
+  }
+
   return (
     <main className="pb-20 lg:pb-0">
-      <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
-        <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md z-20">
-          <div className="h-1 w-full bg-(--dk-sky)/70" />
-          <div className="px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
+        <div className="sticky top-0 z-20 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+          <div className="h-0.5 w-full bg-(--dk-sky)/65" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-(--dk-mist) transition"
+              className="rounded-lg p-2 transition hover:bg-(--dk-mist)/75"
               aria-label="Back"
             >
               <ArrowLeft size={18} className="text-(--dk-ink)" />
@@ -106,18 +115,38 @@ export default function CloseFriendsPage() {
         </div>
 
         <div className="pb-8">
-          <div className="px-4 pt-6">
+          <div className="space-y-3 px-4 pt-5 sm:px-5">
+            <div className="flex items-center gap-2 rounded-lg bg-(--dk-mist)/55 px-3 py-2.5">
+              <Search size={16} className="text-(--dk-sky)" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") goToUserSearch()
+                }}
+                placeholder="Search users"
+                className="w-full bg-transparent text-sm text-(--dk-ink) outline-none placeholder:text-(--dk-slate)"
+              />
+              <button
+                type="button"
+                onClick={goToUserSearch}
+                className="text-xs text-(--dk-sky) hover:text-(--dk-ink) transition"
+              >
+                Search
+              </button>
+            </div>
             {error ? <FormAlert>{error}</FormAlert> : null}
             {actionError ? <FormAlert>{actionError}</FormAlert> : null}
           </div>
 
-          <section className="border-t border-(--dk-ink)/10">
+          <section className="mt-2">
             {loading ? (
-              <div className="px-4 py-6 text-sm text-(--dk-slate)">
+              <div className="px-4 py-6 text-sm text-(--dk-slate) sm:px-5">
                 Loading close friends...
               </div>
             ) : items.length === 0 ? (
-              <div className="px-4 py-6 text-sm text-(--dk-slate)">
+              <div className="px-4 py-6 text-sm text-(--dk-slate) sm:px-5">
                 You have no close friends yet.
               </div>
             ) : (
@@ -137,9 +166,9 @@ export default function CloseFriendsPage() {
                   const isInCloseFriends = !isRemoved
 
                   return (
-                    <div key={friend._id} className="px-4 py-4">
+                    <div key={friend._id} className="px-4 py-4 transition hover:bg-(--dk-mist)/28 sm:px-5">
                       <div className="flex items-center gap-3">
-                        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-mist)">
+                        <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-sm bg-(--dk-mist)">
                           <Image src={avatar} alt="" fill className="object-cover" />
                         </div>
 
@@ -157,9 +186,9 @@ export default function CloseFriendsPage() {
                           onClick={() => toggleCloseFriend(username)}
                           disabled={isBusy}
                           className={[
-                            "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition",
+                            "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition",
                             isInCloseFriends
-                              ? "bg-(--dk-mist) text-(--dk-ink) hover:bg-(--dk-mist)/70"
+                              ? "bg-(--dk-mist)/65 text-(--dk-ink) hover:bg-(--dk-mist)"
                               : "bg-(--dk-sky) text-white hover:brightness-95",
                             isBusy ? "opacity-60" : "",
                           ].join(" ")}
@@ -181,7 +210,7 @@ export default function CloseFriendsPage() {
                 })}
 
                 {loadingMore ? (
-                  <div className="px-4 py-4 text-sm text-(--dk-slate)">
+                  <div className="px-4 py-4 text-sm text-(--dk-slate) sm:px-5">
                     Loading more...
                   </div>
                 ) : null}

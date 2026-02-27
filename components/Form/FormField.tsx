@@ -40,10 +40,9 @@ export default function FormField({
   }, [multiline, inputProps?.value, textareaProps?.value])
 
   const baseClass = [
-    "w-full rounded-xl border px-4 py-3 pr-11 text-sm outline-none transition",
-    "bg-(--dk-paper)",
-    "border-(--dk-ink)/10",
-    "focus:border-(--dk-sky)",
+    "w-full rounded-lg border border-transparent px-4 py-3 pr-11 text-sm outline-none transition",
+    "bg-(--dk-mist)/45",
+    "focus:border-(--dk-sky)/35 focus:bg-(--dk-paper)",
     "text-(--dk-ink)",
     multiline ? "resize-none min-h-[140px]" : "",
   ]

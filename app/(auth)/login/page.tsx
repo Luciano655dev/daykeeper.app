@@ -94,7 +94,7 @@ function LoginForm() {
       <FormCard>
         <FormHeader title="Welcome back" subtitle="Log in to your account" />
 
-        <form className="space-y-4" onSubmit={onSubmit}>
+        <form className="space-y-3.5" onSubmit={onSubmit}>
           {successText ? (
             <FormAlert type="success">{successText}</FormAlert>
           ) : null}

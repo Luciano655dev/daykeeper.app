@@ -44,11 +44,11 @@ export default function PrivacyPicker({
               type="button"
               onClick={() => onChange(opt.value)}
               className={[
-                "rounded-xl border px-3 py-2 text-left transition",
+                "rounded-lg px-3 py-2 text-left transition",
                 "flex flex-col gap-1",
                 active
-                  ? "border-(--dk-sky) bg-(--dk-sky)/10 text-(--dk-sky)"
-                  : "border-(--dk-ink)/10 bg-(--dk-paper) text-(--dk-ink)",
+                  ? "bg-(--dk-sky)/14 text-(--dk-sky)"
+                  : "bg-(--dk-mist)/45 text-(--dk-ink)",
               ].join(" ")}
             >
               <div className="flex items-center gap-2">

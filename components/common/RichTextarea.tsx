@@ -36,9 +36,9 @@ export default function RichTextarea({
           rows={rows}
           maxLength={maxLength}
           className={[
-            "w-full rounded-xl border border-(--dk-ink)/10",
-            "bg-(--dk-paper) px-3 py-2 text-sm leading-relaxed text-(--dk-ink)",
-            "focus:outline-none focus:ring-2 focus:ring-(--dk-sky)/40",
+            "w-full rounded-lg border border-transparent",
+            "bg-(--dk-mist)/45 px-3 py-2 text-sm leading-relaxed text-(--dk-ink)",
+            "focus:outline-none focus:ring-2 focus:ring-(--dk-sky)/30",
             "selection:bg-(--dk-sky)/20",
             className ?? "",
           ].join(" ")}
@@ -59,8 +59,8 @@ export default function RichTextarea({
         <div
           ref={previewRef}
           className={[
-            "absolute inset-0 rounded-xl border border-(--dk-ink)/10",
-            "bg-(--dk-paper)",
+            "absolute inset-0 rounded-lg border border-transparent",
+            "bg-(--dk-mist)/45",
             "px-3 py-2 text-sm leading-relaxed",
             "pointer-events-none",
             "overflow-hidden",
@@ -86,10 +86,10 @@ export default function RichTextarea({
             }
           }}
           className={[
-            "relative w-full rounded-xl",
+            "relative w-full rounded-lg",
             "bg-transparent px-3 py-2 text-sm leading-relaxed",
             "text-transparent caret-(--dk-ink)",
-            "focus:outline-none focus:ring-2 focus:ring-(--dk-sky)/40",
+            "focus:outline-none focus:ring-2 focus:ring-(--dk-sky)/30",
             "selection:bg-(--dk-sky)/20",
             className ?? "",
           ].join(" ")}

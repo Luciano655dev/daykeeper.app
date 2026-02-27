@@ -27,25 +27,25 @@ const CREATE_ITEMS: CreateItem[] = [
     href: "/post/create",
     label: "Post",
     icon: SquarePen,
-    subtitle: "Share on your timeline",
+    subtitle: "Share on timeline",
   },
   {
     href: "/day/notes/create",
     label: "Note",
     icon: FileText,
-    subtitle: "Write a quick note",
+    subtitle: "Write a note",
   },
   {
     href: "/day/events/create",
     label: "Event",
     icon: CalendarPlus,
-    subtitle: "Add something scheduled",
+    subtitle: "Schedule something",
   },
   {
     href: "/day/tasks/create",
     label: "Task",
     icon: CheckSquare2,
-    subtitle: "Track something to do",
+    subtitle: "Track a task",
   },
 ]
 
@@ -123,7 +123,7 @@ export default function CreateMenuButton({ variant }: { variant: Variant }) {
               ref={panelRef}
               role="dialog"
               aria-modal="true"
-              className="absolute inset-x-0 bottom-0 rounded-t-2xl border border-(--dk-ink)/10 bg-(--dk-paper) shadow-[0_-12px_28px_rgba(15,23,42,0.12)] p-4 pb-6"
+              className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-(--dk-paper) ring-1 ring-(--dk-ink)/10 p-4 pb-6"
             >
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-sm font-semibold text-(--dk-ink)">
@@ -147,10 +147,10 @@ export default function CreateMenuButton({ variant }: { variant: Variant }) {
                       key={item.href}
                       href={item.href}
                       onClick={() => setOpen(false)}
-                      className="rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) p-3 text-left hover:bg-(--dk-mist) transition"
+                      className="rounded-xl bg-(--dk-mist)/45 p-3 text-left transition hover:bg-(--dk-sky)/12"
                     >
-                      <div className="mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-(--dk-sky)/10 text-(--dk-sky)">
-                        <Icon size={18} />
+                      <div className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-(--dk-paper) text-(--dk-sky)">
+                        <Icon size={17} />
                       </div>
                       <div className="text-sm font-semibold text-(--dk-ink)">
                         {item.label}
@@ -188,13 +188,16 @@ export default function CreateMenuButton({ variant }: { variant: Variant }) {
               <div
                 ref={panelRef}
                 role="menu"
-                className="fixed z-[2147483647] w-72 rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) shadow-[0_10px_24px_rgba(15,23,42,0.10)] p-2"
+                className="fixed z-[2147483647] w-72 rounded-xl bg-(--dk-paper) ring-1 ring-(--dk-ink)/10 p-2"
                 style={{
                   top,
                   left,
                   transform: "translateY(-50%)",
                 }}
               >
+                <div className="px-2 pb-2 pt-1 text-[11px] font-medium tracking-wide text-(--dk-slate)">
+                  Create
+                </div>
                 {CREATE_ITEMS.map((item) => {
                   const Icon = item.icon
                   return (
@@ -203,10 +206,10 @@ export default function CreateMenuButton({ variant }: { variant: Variant }) {
                       href={item.href}
                       role="menuitem"
                       onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-(--dk-mist) transition"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition hover:bg-(--dk-mist)/55"
                     >
-                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-(--dk-sky)/10 text-(--dk-sky)">
-                        <Icon size={18} />
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-(--dk-mist)/65 text-(--dk-sky)">
+                        <Icon size={17} />
                       </span>
                       <span className="min-w-0">
                         <span className="block text-sm font-semibold text-(--dk-ink)">

@@ -131,13 +131,13 @@ function CreateNoteForm() {
 
   return (
     <main className="pb-20 lg:pb-0">
-      <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
-        <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md">
-          <div className="h-1 w-full bg-(--dk-sky)/70" />
-          <div className="px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
+        <div className="sticky top-0 z-10 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+          <div className="h-0.5 w-full bg-(--dk-sky)/65" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-(--dk-mist) transition"
+              className="rounded-lg p-2 transition hover:bg-(--dk-mist)/75"
               aria-label="Back"
               disabled={busy}
             >
@@ -155,7 +155,7 @@ function CreateNoteForm() {
           </div>
         </div>
 
-        <div className="px-4 py-4 space-y-4">
+        <div className="space-y-4 px-4 py-4 sm:px-5">
           {formError ? <FormAlert type="error">{formError}</FormAlert> : null}
 
           <div className="space-y-2">
@@ -166,9 +166,9 @@ function CreateNoteForm() {
               rows={6}
               placeholder="Write your note…"
               className={[
-                "w-full rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper)",
+                "w-full rounded-lg border border-transparent bg-(--dk-mist)/45",
                 "px-3 py-2 text-sm text-(--dk-ink)",
-                "focus:outline-none focus:ring-2 focus:ring-(--dk-sky)/40",
+                "focus:outline-none focus:ring-2 focus:ring-(--dk-sky)/30",
               ].join(" ")}
             />
             <div className="text-xs text-(--dk-slate)">
@@ -183,7 +183,7 @@ function CreateNoteForm() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink)"
+                className="mt-2 w-full rounded-lg border border-transparent bg-(--dk-mist)/45 px-3 py-2 text-sm text-(--dk-ink)"
               />
             </div>
             <div>
@@ -192,7 +192,7 @@ function CreateNoteForm() {
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink)"
+                className="mt-2 w-full rounded-lg border border-transparent bg-(--dk-mist)/45 px-3 py-2 text-sm text-(--dk-ink)"
               />
             </div>
           </div>
@@ -204,7 +204,7 @@ function CreateNoteForm() {
               type="button"
               onClick={() => router.back()}
               disabled={busy}
-              className="px-3 py-2 rounded-xl border border-(--dk-ink)/10 hover:bg-(--dk-ink)/5 text-sm transition disabled:opacity-60"
+              className="rounded-lg bg-(--dk-mist)/55 px-3 py-2 text-sm transition hover:bg-(--dk-mist)/80 disabled:opacity-60"
             >
               Cancel
             </button>
@@ -213,7 +213,7 @@ function CreateNoteForm() {
               type="button"
               onClick={onSave}
               disabled={!canSave}
-              className="px-3 py-2 rounded-xl bg-(--dk-sky) text-white text-sm hover:opacity-95 transition disabled:opacity-60"
+              className="rounded-lg bg-(--dk-sky) px-3 py-2 text-sm text-white transition hover:opacity-95 disabled:opacity-60"
             >
               {busy ? "Saving..." : "Create note"}
             </button>
@@ -229,7 +229,7 @@ export default function CreateNotePage() {
     <Suspense
       fallback={
         <main className="pb-20 lg:pb-0">
-          <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
+          <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
             <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
           </div>
         </main>

@@ -22,19 +22,11 @@ export default function AvatarPicker({
   onReset: () => void
   onUndo: () => void
 }) {
-  const subtitle = avatarResetQueued
-    ? "Will reset after you save."
-    : avatarFile
-      ? "Will upload after you save."
-      : "Current profile picture."
-
   return (
     <section className="w-full">
-      {/* Mobile-first: centered + bigger avatar */}
       <div className="flex flex-col items-center text-center gap-4">
-        {/* Avatar */}
         <div className="w-full flex justify-center">
-          <div className="relative h-36 w-36 sm:h-44 sm:w-44 md:h-52 md:w-52 overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-ink)/5">
+          <div className="relative h-32 w-32 overflow-hidden rounded-lg bg-(--dk-mist)/45 ring-1 ring-(--dk-ink)/10 sm:h-36 sm:w-36">
             <Image
               src={avatarSrc}
               alt="Profile picture"
@@ -46,12 +38,11 @@ export default function AvatarPicker({
           </div>
         </div>
 
-        {/* Actions */}
         <div className="w-full grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-center sm:gap-2">
           <button
             type="button"
             onClick={onPick}
-            className="inline-flex w-full items-center justify-center gap-2 h-11 px-4 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) text-sm font-medium text-(--dk-ink) hover:bg-(--dk-ink)/5 transition"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-(--dk-mist)/55 px-4 text-sm font-medium text-(--dk-ink) transition hover:bg-(--dk-mist)/80"
           >
             <Camera size={18} />
             Choose
@@ -60,7 +51,7 @@ export default function AvatarPicker({
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex w-full items-center justify-center gap-2 h-11 px-4 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) text-sm font-medium text-(--dk-ink)/80 hover:bg-(--dk-ink)/5 transition"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-(--dk-mist)/55 px-4 text-sm font-medium text-(--dk-ink)/80 transition hover:bg-(--dk-mist)/80"
           >
             <Trash2 size={18} />
             Reset
@@ -70,7 +61,7 @@ export default function AvatarPicker({
             <button
               type="button"
               onClick={onUndo}
-              className="col-span-2 inline-flex w-full items-center justify-center gap-2 h-11 px-4 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) text-sm font-medium text-(--dk-ink)/80 hover:bg-(--dk-ink)/5 transition sm:col-auto sm:w-auto"
+              className="col-span-2 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-(--dk-mist)/55 px-4 text-sm font-medium text-(--dk-ink)/80 transition hover:bg-(--dk-mist)/80 sm:col-auto sm:w-auto"
             >
               <Undo2 size={18} />
               Undo
@@ -86,7 +77,6 @@ export default function AvatarPicker({
           />
         </div>
 
-        {/* Tiny hint (optional) */}
         <div className="text-[11px] text-(--dk-slate)">
           PNG or JPG. Max 8MB.
         </div>

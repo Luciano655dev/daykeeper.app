@@ -83,7 +83,7 @@ export default function RegisterPage() {
           subtitle="Start your DayKeeper journey"
         />
 
-        <form className="space-y-4" onSubmit={onSubmit}>
+        <form className="space-y-3.5" onSubmit={onSubmit}>
           <FormField
             label="Username"
             inputProps={{
@@ -132,7 +132,7 @@ export default function RegisterPage() {
             <label className="flex items-start gap-3 text-sm">
               <input
                 type="checkbox"
-                className="mt-1 h-4 w-4 rounded border"
+                className="mt-0.5 h-4 w-4 rounded border border-(--dk-ink)/20 bg-(--dk-paper)"
                 checked={agree}
                 onChange={(e) => setAgree(e.target.checked)}
               />

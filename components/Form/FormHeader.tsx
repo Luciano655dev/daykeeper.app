@@ -8,9 +8,9 @@ export default function FormHeader({
   subtitle?: string
 }) {
   return (
-    <div className="mb-6 text-center">
+    <div className="mb-5 text-center">
       <h1
-        className="text-xl font-semibold tracking-tight"
+        className="text-2xl font-semibold tracking-tight"
         style={{ color: brand.ink }}
       >
         {title}
