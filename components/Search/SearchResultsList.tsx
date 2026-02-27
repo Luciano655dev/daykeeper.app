@@ -46,13 +46,13 @@ export default function SearchResultsList({
       />
 
       {loadingMore ? (
-        <div className="px-4 pb-6 text-center text-sm text-(--dk-slate)">
+        <div className="px-4 pb-6 text-center text-sm text-(--dk-slate) sm:px-5">
           Loading more…
         </div>
       ) : null}
 
       {!hasMore && items.length ? (
-        <div className="px-4 pb-6 text-center text-xs text-(--dk-slate)">
+        <div className="px-4 pb-6 text-center text-xs text-(--dk-slate) sm:px-5">
           End of results
         </div>
       ) : null}

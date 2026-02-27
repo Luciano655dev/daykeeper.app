@@ -14,14 +14,14 @@ export default function SearchFiltersRow({
   onFollowingChange: (v?: FollowingScope) => void
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       <select
         value={order}
         onChange={(e) => onOrderChange(e.target.value as SearchOrder)}
-        className="rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink) outline-none"
+        className="rounded-lg bg-(--dk-paper)/70 px-3 py-2 text-sm text-(--dk-ink) outline-none hover:bg-(--dk-sky)/14 focus:bg-(--dk-sky)/14"
       >
-        <option value="recent">recent</option>
-        <option value="relevant">relevant</option>
+        <option value="recent">Most recent</option>
+        <option value="relevant">Most relevant</option>
       </select>
 
       <select
@@ -30,12 +30,12 @@ export default function SearchFiltersRow({
           const v = e.target.value as any
           onFollowingChange(v === "default" ? undefined : (v as FollowingScope))
         }}
-        className="rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-ink) outline-none"
+        className="rounded-lg bg-(--dk-paper)/70 px-3 py-2 text-sm text-(--dk-ink) outline-none hover:bg-(--dk-sky)/14 focus:bg-(--dk-sky)/14"
       >
-        <option value="default">all</option>
-        <option value="friends">friends</option>
-        <option value="following">following</option>
-        <option value="followers">followers</option>
+        <option value="default">All users</option>
+        <option value="friends">Friends</option>
+        <option value="following">Following</option>
+        <option value="followers">Followers</option>
       </select>
     </div>
   )

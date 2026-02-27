@@ -85,9 +85,8 @@ export default function SearchPostResultCard({ post }: { post: any }) {
   return (
     <div
       className={[
-        "rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper)",
-        "hover:bg-(--dk-mist)/40 transition",
-        "p-3 cursor-pointer",
+        "cursor-pointer rounded-lg px-3 py-3 transition",
+        "hover:bg-(--dk-mist)/35",
       ].join(" ")}
       onClick={() => router.push(`/post/${encodeURIComponent(String(postId))}`)}
     >
@@ -105,14 +104,14 @@ export default function SearchPostResultCard({ post }: { post: any }) {
         menuItems={[]}
       />
 
-      <p className="mt-2 text-(--dk-ink) text-[15px] leading-relaxed whitespace-pre-wrap">
+      <p className="mt-2 whitespace-pre-wrap text-[15px] leading-relaxed text-(--dk-ink)">
         <RichText text={String(content || "")} />
       </p>
 
       <FeedPostMediaStrip media={post?.media || []} />
 
       {/* like/comment row (same behavior as your FeedPostItem) */}
-      <div className="flex items-center gap-6 text-(--dk-slate) mt-3 pt-3 border-t border-(--dk-ink)/10">
+      <div className="mt-3 flex items-center gap-6 text-(--dk-slate)">
         <button
           onClick={toggleLike}
           className="flex items-center gap-1.5 text-xs cursor-pointer transition hover:text-(--dk-sky)"

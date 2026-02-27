@@ -24,7 +24,7 @@ export default function SearchResultsSwitch({
 }) {
   if (type === "Post") {
     return (
-      <div className="px-4 pb-6 space-y-2">
+      <div className="space-y-1 px-4 pb-6 sm:px-5">
         {items.map((p: any) => (
           <SearchPostResultCard key={String(p?._id || p?.id)} post={p} />
         ))}
@@ -34,7 +34,7 @@ export default function SearchResultsSwitch({
 
   if (type === "User") {
     return (
-      <div className="px-4 pb-6 space-y-2">
+      <div className="space-y-1 px-4 pb-6 sm:px-5">
         {items.map((u: any) => (
           <SearchUserResultRow key={String(u?._id)} user={u} />
         ))}
@@ -44,7 +44,7 @@ export default function SearchResultsSwitch({
 
   if (type === "Note" || type === "Event" || type === "Task") {
     return (
-      <div className="px-4 pb-6">
+      <div className="px-4 pb-6 sm:px-5">
         <SearchDayKindResults
           type={type}
           items={items}

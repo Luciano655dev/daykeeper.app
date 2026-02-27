@@ -87,13 +87,13 @@ function SearchPageInner() {
 
   return (
     <main className="pb-20 lg:pb-0">
-      <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
-        <div className="sticky top-0 bg-(--dk-paper)/95 backdrop-blur-md z-20">
-          <div className="h-1 w-full bg-(--dk-sky)/70" />
-          <div className="px-4 py-3 flex items-center gap-3">
+      <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
+        <div className="sticky top-0 z-20 border-b border-(--dk-ink)/10 bg-(--dk-paper)/96 backdrop-blur-md">
+          <div className="h-0.5 w-full bg-(--dk-sky)/65" />
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5">
             <button
               onClick={() => router.back()}
-              className="p-2 rounded-lg hover:bg-(--dk-mist) transition"
+              className="rounded-lg p-2 transition hover:bg-(--dk-mist)/75"
               aria-label="Back"
             >
               <ArrowLeft size={18} className="text-(--dk-ink)" />
@@ -107,7 +107,7 @@ function SearchPageInner() {
             </div>
           </div>
 
-          <div className="px-4 pb-3">
+          <div className="px-4 pb-3 sm:px-5">
             <SearchBar
               value={input}
               onChange={onChangeInput}
@@ -115,7 +115,7 @@ function SearchPageInner() {
             />
           </div>
 
-          <div className="px-4 pb-3 flex flex-col gap-2">
+          <div className="flex flex-col gap-2 px-4 pb-3 sm:px-5">
             <SearchTypePills
               value={type}
               onChange={(t) => setParam({ type: t })}
@@ -136,10 +136,10 @@ function SearchPageInner() {
         ) : null}
 
         {!search.loadingFirst && !search.error && !search.data.length ? (
-          <div className="px-4 py-5">
-            <div className="rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) p-6">
+          <div className="px-4 py-6 sm:px-5">
+            <div className="rounded-xl bg-(--dk-mist)/45 p-5">
               <div className="flex items-start gap-3">
-                <div className="h-10 w-10 rounded-xl bg-(--dk-mist) flex items-center justify-center text-(--dk-sky)">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-(--dk-paper) text-(--dk-sky)">
                   <ArrowLeft size={18} className="rotate-180" />
                 </div>
                 <div className="min-w-0">
@@ -174,7 +174,7 @@ export default function SearchPage() {
     <Suspense
       fallback={
         <main className="pb-20 lg:pb-0">
-          <div className="max-w-2xl mx-auto border-x border-(--dk-ink)/10 bg-(--dk-paper) min-h-screen">
+          <div className="mx-auto min-h-screen max-w-3xl bg-(--dk-paper) lg:border-x lg:border-(--dk-ink)/10">
             <div className="px-4 py-6 text-sm text-(--dk-slate)">Loading…</div>
           </div>
         </main>

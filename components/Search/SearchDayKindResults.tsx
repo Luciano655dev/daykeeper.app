@@ -36,13 +36,13 @@ export default function SearchDayKindResults({
   const showShowAll = !showLoadMore && canExpand
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {canCollapse ? (
         <div className="flex justify-end">
           <button
             type="button"
             onClick={() => setCollapsed(true)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-medium text-(--dk-slate) hover:text-(--dk-ink)"
           >
             <ChevronUp size={14} />
             Collapse
@@ -50,7 +50,7 @@ export default function SearchDayKindResults({
         </div>
       ) : null}
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         {visible.map((it: any) => (
           <SearchDayKindRow key={String(it?._id)} type={type} item={it} />
         ))}

@@ -27,7 +27,7 @@ export default function SearchTypePills({
   const types: SearchType[] = ["Post", "User", "Event", "Note", "Task"]
 
   return (
-    <div className="flex gap-2 overflow-x-auto whitespace-nowrap -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible scrollbar-none">
+    <div className="grid w-full grid-cols-5 gap-2">
       {types.map((t) => {
         const active = t === value
         return (
@@ -35,10 +35,10 @@ export default function SearchTypePills({
             key={t}
             onClick={() => onChange(t)}
             className={[
-              "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm transition",
+              "inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm transition",
               active
-                ? "border-(--dk-sky)/60 bg-(--dk-sky) text-(--dk-paper)"
-                : "border-(--dk-ink)/10 bg-(--dk-paper) text-(--dk-ink) hover:bg-(--dk-mist)",
+                ? "bg-(--dk-sky)/18 text-(--dk-ink)"
+                : "bg-(--dk-paper)/70 text-(--dk-slate) hover:bg-(--dk-sky)/14 hover:text-(--dk-ink)",
             ].join(" ")}
           >
             <TypeIcon type={t} />

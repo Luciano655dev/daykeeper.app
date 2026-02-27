@@ -26,8 +26,8 @@ export default function SearchUserResultRow({ user }: { user: any }) {
         if (href) router.push(href)
       }}
       className={[
-        "w-full text-left rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) transition p-3",
-        "hover:bg-(--dk-mist)",
+        "w-full rounded-lg p-3 text-left transition",
+        "hover:bg-(--dk-mist)/35",
       ].join(" ")}
     >
       <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ export default function SearchUserResultRow({ user }: { user: any }) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold text-(--dk-ink)">
+          <div className="truncate text-[15px] font-semibold text-(--dk-ink)">
             {title}
           </div>
           <div className="mt-0.5 line-clamp-2 text-xs text-(--dk-slate)">

@@ -192,9 +192,8 @@ export default function SearchDayKindRow({
   return (
     <div
       className={[
-        "rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper)",
-        "hover:bg-(--dk-mist)/40 transition",
-        "p-3",
+        "rounded-lg px-3 py-3 transition",
+        "hover:bg-(--dk-mist)/35",
       ].join(" ")}
       onClick={() => {
         if (href) router.push(href)
