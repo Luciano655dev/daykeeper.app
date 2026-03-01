@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { cookies, headers } from "next/headers"
 import { API_URL } from "@/config"
+import { checkRateLimit } from "@/lib/server/rateLimit"
 const isProd = process.env.NODE_ENV === "production"
 
 const refreshCookieOptions = {
@@ -11,7 +12,10 @@ const refreshCookieOptions = {
   maxAge: 30 * 24 * 60 * 60,
 }
 
-export async function POST() {
+export async function POST(req: Request) {
+  const limited = checkRateLimit(req, "auth:refresh", 60, 60_000)
+  if (limited) return limited
+
   const cookieStore = await cookies()
   const refreshToken = cookieStore.get("refreshToken")?.value
 

@@ -1,8 +1,21 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { API_URL } from "@/config"
+import { checkRateLimit } from "@/lib/server/rateLimit"
 
-export async function POST() {
+const isProd = process.env.NODE_ENV === "production"
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: "lax" as const,
+  path: "/",
+  maxAge: 0,
+}
+
+export async function POST(req: Request) {
+  const limited = checkRateLimit(req, "auth:logout", 30, 60_000)
+  if (limited) return limited
+
   try {
     const cookieStore = await cookies()
     const refreshToken = cookieStore.get("refreshToken")?.value
@@ -17,23 +30,11 @@ export async function POST() {
     }
 
     const out = NextResponse.json({ ok: true }, { status: 200 })
-    out.cookies.set("refreshToken", "", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 0,
-    })
+    out.cookies.set("refreshToken", "", refreshCookieOptions)
     return out
-  } catch (e: any) {
+  } catch {
     const out = NextResponse.json({ ok: false }, { status: 200 })
-    out.cookies.set("refreshToken", "", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 0,
-    })
+    out.cookies.set("refreshToken", "", refreshCookieOptions)
     return out
   }
 }

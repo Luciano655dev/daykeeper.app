@@ -41,6 +41,7 @@ export default function EditMediaDropzone({
   const newPreviews = useObjectUrlPreviews(newFiles)
   const total = keepMediaIds.size + newFiles.length
   const canAddMore = total < maxMedia
+  const remaining = Math.max(0, maxMedia - total)
 
   function onDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault()
@@ -66,7 +67,12 @@ export default function EditMediaDropzone({
         <button
           type="button"
           onClick={onPick}
-          className="hidden sm:inline-flex items-center gap-2 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-sky) hover:underline"
+          className={[
+            "hidden items-center gap-2 rounded-lg px-3 py-2 text-sm sm:inline-flex",
+            canAddMore
+              ? "bg-(--dk-mist)/55 text-(--dk-sky)"
+              : "bg-(--dk-mist)/30 text-(--dk-slate)",
+          ].join(" ")}
           disabled={!canAddMore}
         >
           <Plus size={16} />
@@ -106,9 +112,9 @@ export default function EditMediaDropzone({
           onDrop(e)
         }}
         className={[
-          "rounded-2xl border border-(--dk-ink)/10 bg-(--dk-paper) overflow-hidden transition",
+          "overflow-hidden rounded-xl bg-(--dk-mist)/30 transition",
           dragOver ? "ring-2 ring-(--dk-sky)/60" : "",
-          !canAddMore ? "opacity-95" : "",
+          !canAddMore ? "opacity-90" : "",
         ].join(" ")}
       >
         {total === 0 ? (
@@ -121,6 +127,7 @@ export default function EditMediaDropzone({
             onPick={onPick}
             onRemoveExisting={onRemoveExisting}
             onRemoveNewFile={onRemoveNewFile}
+            remaining={remaining}
           />
         )}
       </div>
@@ -138,7 +145,7 @@ function EmptyState({
   return (
     <div className="p-6 sm:p-10">
       <div className="mx-auto max-w-md text-center">
-        <div className="mx-auto h-14 w-14 rounded-2xl border border-(--dk-ink)/10 bg-(--dk-sky)/10 flex items-center justify-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-(--dk-sky)/10">
           {dragOver ? (
             <UploadCloud size={22} className="text-(--dk-sky)" />
           ) : (
@@ -153,7 +160,7 @@ function EmptyState({
           Click anywhere here, or drag files in. Up to {maxMedia}.
         </div>
 
-        <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper) px-3 py-2 text-sm text-(--dk-sky)">
+        <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-(--dk-paper)/75 px-3 py-2 text-sm text-(--dk-sky)">
           <Plus size={16} />
           Choose files
         </div>
@@ -169,6 +176,7 @@ function GridState({
   onPick,
   onRemoveExisting,
   onRemoveNewFile,
+  remaining,
 }: {
   keptExisting: ExistingMedia[]
   newPreviews: Preview[]
@@ -176,15 +184,15 @@ function GridState({
   onPick: () => void
   onRemoveExisting: (id: string) => void
   onRemoveNewFile: (index: number) => void
+  remaining: number
 }) {
   return (
     <div className="p-2">
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {/* existing kept */}
         {keptExisting.map((m) => (
           <div
             key={m._id}
-            className="relative overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper)"
+            className="relative overflow-hidden rounded-lg bg-(--dk-paper)/80"
           >
             <div className="aspect-square">
               {m.type === "video" ? (
@@ -204,6 +212,9 @@ function GridState({
                 />
               )}
             </div>
+            <span className="absolute left-2 top-2 rounded-md bg-(--dk-paper)/90 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-(--dk-slate)">
+              Kept
+            </span>
 
             <button
               type="button"
@@ -212,7 +223,7 @@ function GridState({
                 e.stopPropagation()
                 onRemoveExisting(m._id)
               }}
-              className="absolute top-2 right-2 inline-flex items-center justify-center rounded-lg border border-(--dk-ink)/10 bg-(--dk-paper)/90 p-1 text-(--dk-ink)"
+              className="absolute right-2 top-2 inline-flex items-center justify-center rounded-lg bg-(--dk-paper)/92 p-1 text-(--dk-ink)"
               aria-label="Remove existing media"
             >
               <X size={16} />
@@ -220,11 +231,10 @@ function GridState({
           </div>
         ))}
 
-        {/* new files */}
         {newPreviews.map((p, idx) => (
           <div
             key={p.url}
-            className="relative overflow-hidden rounded-xl border border-(--dk-ink)/10 bg-(--dk-paper)"
+            className="relative overflow-hidden rounded-lg bg-(--dk-paper)/80"
           >
             <div className="aspect-square">
               {p.kind === "video" ? (
@@ -244,6 +254,9 @@ function GridState({
                 />
               )}
             </div>
+            <span className="absolute left-2 top-2 rounded-md bg-(--dk-sky)/88 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-white">
+              New
+            </span>
 
             <button
               type="button"
@@ -252,7 +265,7 @@ function GridState({
                 e.stopPropagation()
                 onRemoveNewFile(idx)
               }}
-              className="absolute top-2 right-2 inline-flex items-center justify-center rounded-lg border border-(--dk-ink)/10 bg-(--dk-paper)/90 p-1 text-(--dk-ink)"
+              className="absolute right-2 top-2 inline-flex items-center justify-center rounded-lg bg-(--dk-paper)/92 p-1 text-(--dk-ink)"
               aria-label="Remove new file"
             >
               <X size={16} />
@@ -260,7 +273,6 @@ function GridState({
           </div>
         ))}
 
-        {/* add tile */}
         {canAddMore ? (
           <button
             type="button"
@@ -270,8 +282,8 @@ function GridState({
               onPick()
             }}
             className={[
-              "aspect-square rounded-xl border border-dashed border-(--dk-ink)/20",
-              "bg-(--dk-paper) hover:bg-(--dk-ink)/3 transition",
+              "aspect-square rounded-lg",
+              "bg-(--dk-paper)/70 text-(--dk-slate) transition hover:bg-(--dk-mist)/60",
               "flex flex-col items-center justify-center gap-2 text-(--dk-slate)",
             ].join(" ")}
           >
@@ -284,7 +296,9 @@ function GridState({
       </div>
 
       <div className="mt-2 text-xs text-(--dk-slate) px-1">
-        Tip: you can drag more files here.
+        {remaining > 0
+          ? `${remaining} slot${remaining === 1 ? "" : "s"} left. You can drag more files here.`
+          : "Max media reached. Remove one to add another."}
       </div>
     </div>
   )

@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server"
 import { API_URL } from "@/config"
+import { checkRateLimit } from "@/lib/server/rateLimit"
 
 export async function POST(req: Request) {
+  const limited = checkRateLimit(req, "auth:reset-password", 6, 60_000)
+  if (limited) return limited
+
   const body = await req.json().catch(() => null)
 
   const email = (body?.email as string | undefined)?.trim()
