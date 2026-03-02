@@ -7,6 +7,15 @@ import { Loader2 } from "lucide-react"
 import type { PaginationMeta } from "@/hooks/useUserDay"
 import formatDDMMYYYY from "@/utils/formatDate"
 
+function stableId(id: unknown): string {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  return ""
+}
+
 export default function UserDayPosts({
   posts,
   hasMore = false,
@@ -69,7 +78,7 @@ export default function UserDayPosts({
     <div className="space-y-4">
       {posts.map((p: any, idx: number) => (
         <FeedPostItem
-          key={p._id}
+          key={stableId(p?._id) || `post-${idx}`}
           post={{
             id: p._id,
             time: formatDDMMYYYY(p.date),

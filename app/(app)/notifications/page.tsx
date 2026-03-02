@@ -8,6 +8,15 @@ import { useNotifications } from "@/hooks/useNotifications"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
+function toStableId(id: unknown): string {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  return ""
+}
+
 export default function NotificationsPage() {
   const router = useRouter()
   const [isPrivate, setIsPrivate] = useState(false)
@@ -46,7 +55,11 @@ export default function NotificationsPage() {
   const displayUnreadCount = unreadCount
 
   const unreadIds = useMemo(
-    () => items.filter((it) => !it.read).map((it) => it._id),
+    () =>
+      items
+        .filter((it) => !it.read)
+        .map((it) => toStableId(it._id))
+        .filter(Boolean),
     [items]
   )
 

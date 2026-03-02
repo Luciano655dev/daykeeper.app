@@ -7,6 +7,29 @@ import {
 
 export const AVATAR_FALLBACK = "/avatar-placeholder.png"
 
+function stableId(value: unknown): string | null {
+  if (typeof value === "string" || typeof value === "number") {
+    const out = String(value).trim()
+    return out || null
+  }
+  if (value && typeof value === "object") {
+    const obj = value as { $oid?: unknown; id?: unknown; _id?: unknown }
+    if (typeof obj.$oid === "string" || typeof obj.$oid === "number") {
+      const out = String(obj.$oid).trim()
+      if (out) return out
+    }
+    if (typeof obj.id === "string" || typeof obj.id === "number") {
+      const out = String(obj.id).trim()
+      if (out) return out
+    }
+    if (typeof obj._id === "string" || typeof obj._id === "number") {
+      const out = String(obj._id).trim()
+      if (out) return out
+    }
+  }
+  return null
+}
+
 export function getTitle(item: any, type: SearchType) {
   if (type === "User") return item?.displayName || item?.username || "User"
   if (type === "Post") return item?.data || "Post"
@@ -46,16 +69,15 @@ export function pickThumb(item: any) {
 export function getHref(item: any, type: SearchType) {
   if (type === "User") {
     if (item?.username) return `/${encodeURIComponent(item.username)}`
-    if (item?._id) return `/${encodeURIComponent(String(item._id))}`
+    const id = stableId(item?._id)
+    if (id) return `/${encodeURIComponent(id)}`
     return null
   }
-  if (type === "Post")
-    return item?._id ? `/post/${encodeURIComponent(String(item._id))}` : null
-  if (type === "Event")
-    return item?._id ? `/event/${encodeURIComponent(String(item._id))}` : null
-  if (type === "Note")
-    return item?._id ? `/note/${encodeURIComponent(String(item._id))}` : null
-  if (type === "Task")
-    return item?._id ? `/task/${encodeURIComponent(String(item._id))}` : null
+  const id = stableId(item?._id)
+  if (!id) return null
+  if (type === "Post") return `/post/${encodeURIComponent(id)}`
+  if (type === "Event") return `/event/${encodeURIComponent(id)}`
+  if (type === "Note") return `/note/${encodeURIComponent(id)}`
+  if (type === "Task") return `/task/${encodeURIComponent(id)}`
   return null
 }

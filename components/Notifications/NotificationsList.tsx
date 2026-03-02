@@ -20,6 +20,25 @@ const ICONS: Record<string, ReactNode> = {
   comment: <MessageCircle size={16} />,
 }
 
+function stableKey(id: unknown, index: number, extra?: unknown) {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  const ex = typeof extra === "string" || typeof extra === "number" ? String(extra) : "n"
+  return `${ex}-${index}`
+}
+
+function stableId(id: unknown): string {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  return ""
+}
+
 function formatStamp(iso?: string) {
   if (!iso) return ""
   const d = new Date(iso)
@@ -195,11 +214,11 @@ export default function NotificationsList({
         </div>
       ) : null}
 
-      {items.map((item) => (
+      {items.map((item, idx) => (
         <NotificationRow
-          key={item._id}
+          key={stableKey(item._id, idx, item.created_at)}
           item={item}
-          isNew={sessionNewIds.has(item._id)}
+          isNew={sessionNewIds.has(stableId(item._id))}
         />
       ))}
 

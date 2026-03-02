@@ -11,6 +11,15 @@ import {
 } from "@/lib/media"
 import { useMediaUrlRecovery } from "@/hooks/useMediaUrlRecovery"
 
+function stableKey(id: unknown, index: number, prefix: string) {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  return `${prefix}-${index}`
+}
+
 export default function FeedPostMediaStrip({
   media,
   onRefreshMedia,
@@ -47,7 +56,7 @@ export default function FeedPostMediaStrip({
       >
         {items.map((m, i) => (
           <MediaTile
-            key={m._id || `${entityKey}-${i}`}
+            key={stableKey(m._id, i, entityKey)}
             media={m}
             onOpen={(e) => {
               e.preventDefault()

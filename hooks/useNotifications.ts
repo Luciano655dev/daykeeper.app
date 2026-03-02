@@ -34,6 +34,15 @@ type NotificationsQueryData = {
 
 const PAGE_SIZE = 20
 
+function toStableId(id: unknown): string {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  return ""
+}
+
 async function fetchNotificationsPage(
   page: number
 ): Promise<NotificationsResponse> {
@@ -90,7 +99,7 @@ export function useNotifications() {
 
   const markRead = useCallback(async (ids: string[]) => {
     if (!ids.length) return
-    const set = new Set(ids.map(String))
+    const set = new Set(ids.map(String).filter(Boolean))
 
     // Optimistic local update so "unread" changes immediately in UI.
     queryClient.setQueryData(["notifications"], (prev: NotificationsQueryData | undefined) => {
@@ -101,7 +110,7 @@ export function useNotifications() {
           ...page,
           data: Array.isArray(page?.data)
             ? page.data.map((it: NotificationItem) =>
-                set.has(String(it?._id)) ? { ...it, read: true } : it
+                set.has(toStableId(it?._id)) ? { ...it, read: true } : it
               )
             : page?.data,
         })),
@@ -128,7 +137,11 @@ export function useNotifications() {
 
   const totalCount = q.data?.pages?.[0]?.totalCount ?? 0
   const unreadCount = items.reduce(
-    (acc, item) => acc + (item.read ? 0 : 1),
+    (acc, item) => {
+      const id = toStableId(item?._id)
+      if (!id) return acc
+      return acc + (item.read ? 0 : 1)
+    },
     0
   )
 

@@ -22,6 +22,16 @@ function cleanText(v?: string) {
     .trim()
 }
 
+function stableKey(id: unknown, index: number, extra?: unknown) {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  const ex = typeof extra === "string" || typeof extra === "number" ? String(extra) : "x"
+  return `${ex}-${index}`
+}
+
 export default function RightPanel() {
   const router = useRouter()
   const [query, setQuery] = useState("")
@@ -141,8 +151,8 @@ export default function RightPanel() {
             </div>
 
             <div className="divide-y divide-(--dk-ink)/10">
-              {newNotifications.map((n) => (
-                <div key={n._id} className="px-4 py-3 transition hover:bg-(--dk-mist)/28">
+              {newNotifications.map((n, idx) => (
+                <div key={stableKey(n._id, idx, n.created_at)} className="px-4 py-3 transition hover:bg-(--dk-mist)/28">
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-(--dk-mist)/65 text-(--dk-sky)">
                       <Bell size={14} />
@@ -199,8 +209,8 @@ export default function RightPanel() {
             </div>
           ) : (
             <div className="divide-y divide-(--dk-ink)/10">
-              {topNotifications.map((n) => (
-                <div key={n._id} className="px-4 py-3 transition hover:bg-(--dk-mist)/28">
+              {topNotifications.map((n, idx) => (
+                <div key={stableKey(n._id, idx, n.created_at)} className="px-4 py-3 transition hover:bg-(--dk-mist)/28">
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-(--dk-mist)/70 text-(--dk-sky)">
                       <Bell size={14} className="flex-none" />

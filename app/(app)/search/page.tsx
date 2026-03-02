@@ -162,7 +162,6 @@ function SearchPageInner() {
             hasMore={search.hasMore}
             loadingMore={search.loadingMore}
             onLoadMore={search.loadMore}
-            onRefreshMedia={search.refetch}
           />
         ) : null}
       </div>

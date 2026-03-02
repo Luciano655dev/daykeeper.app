@@ -21,6 +21,29 @@ export type SearchResponse = {
   totalCount: number
 }
 
+function stableId(value: unknown): string | null {
+  if (typeof value === "string" || typeof value === "number") {
+    const out = String(value).trim()
+    return out || null
+  }
+  if (value && typeof value === "object") {
+    const obj = value as { $oid?: unknown; id?: unknown; _id?: unknown }
+    if (typeof obj.$oid === "string" || typeof obj.$oid === "number") {
+      const out = String(obj.$oid).trim()
+      if (out) return out
+    }
+    if (typeof obj.id === "string" || typeof obj.id === "number") {
+      const out = String(obj.id).trim()
+      if (out) return out
+    }
+    if (typeof obj._id === "string" || typeof obj._id === "number") {
+      const out = String(obj._id).trim()
+      if (out) return out
+    }
+  }
+  return null
+}
+
 function readJsonSafe<T>(res: Response): Promise<T | null> {
   return res.json().catch(() => null)
 }
@@ -91,16 +114,16 @@ async function fetchSearchPage(args: {
   }
 }
 
-function flattenPagesUniqueById<T extends { _id?: any }>(
+function flattenPagesUniqueById<T extends { _id?: unknown; id?: unknown }>(
   pages: SearchResponse[] | undefined,
 ): T[] {
   if (!pages?.length) return []
 
   const map = new Map<string, T>()
+  let fallbackIndex = 0
   for (const p of pages) {
     for (const it of p.data ?? []) {
-      const id = it?._id ? String(it._id) : ""
-      if (!id) continue
+      const id = stableId(it?._id) || stableId(it?.id) || `fallback-${fallbackIndex++}`
       map.set(id, it)
     }
   }

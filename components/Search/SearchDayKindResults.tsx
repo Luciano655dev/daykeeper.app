@@ -9,6 +9,15 @@ import { ChevronUp, ChevronDown } from "lucide-react"
 import ActionPill from "@/components/common/ActionPill"
 import SearchDayKindRow from "@/components/Search/SearchDayKindRow"
 
+function stableKey(id: unknown, index: number) {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  return `day-kind-${index}`
+}
+
 export default function SearchDayKindResults({
   type,
   items,
@@ -51,8 +60,8 @@ export default function SearchDayKindResults({
       ) : null}
 
       <div className="space-y-1">
-        {visible.map((it: any) => (
-          <SearchDayKindRow key={String(it?._id)} type={type} item={it} />
+        {visible.map((it: any, idx: number) => (
+          <SearchDayKindRow key={stableKey(it?._id, idx)} type={type} item={it} />
         ))}
       </div>
 

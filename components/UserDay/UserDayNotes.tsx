@@ -16,6 +16,15 @@ import ActionPill from "../common/ActionPill"
 import type { PaginationMeta } from "@/hooks/useUserDay"
 import RichText from "@/components/common/RichText"
 
+function stableId(id: unknown): string {
+  if (typeof id === "string" || typeof id === "number") return String(id)
+  if (id && typeof id === "object") {
+    const oid = (id as { $oid?: unknown }).$oid
+    if (typeof oid === "string" || typeof oid === "number") return String(oid)
+  }
+  return ""
+}
+
 function formatTime(s?: string) {
   if (!s) return ""
   const d = new Date(s)
@@ -78,9 +87,9 @@ export default function UserDayNotes({
       ) : null}
 
       <div className="space-y-0.5">
-        {visible.map((n: any) => (
+        {visible.map((n: any, idx: number) => (
           <UserDayListRow
-            key={n._id}
+            key={stableId(n?._id) || `note-${idx}`}
             leftIcon={<StickyNote size={18} />}
             title={
               <span className="whitespace-pre-wrap">
