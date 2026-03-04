@@ -3,7 +3,11 @@
 import { useMemo, useCallback } from "react"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/authClient"
-import { normalizeFeedPayload, type FeedUserDay } from "@/lib/feedTypes"
+import {
+  normalizeFeedPayload,
+  stableFeedId,
+  type FeedUserDay,
+} from "@/lib/feedTypes"
 import { toDDMMYYYY } from "@/lib/date"
 import { API_URL } from "@/config"
 
@@ -62,9 +66,17 @@ export function useFeed(selectedDate: Date) {
     const all = pages.flatMap(
       (p) => (normalizeFeedPayload(p) as FeedUserDay[]) ?? [],
     )
-    // keep your de-dupe (useful if server shifts paging)
-    const map = new Map<string | number, FeedUserDay>()
-    for (const it of all) map.set(it.userId, it)
+    // keep de-dupe (useful if server shifts paging), but only on stable ids
+    const map = new Map<string, FeedUserDay>()
+    let fallback = 0
+    for (const it of all) {
+      const key =
+        stableFeedId(it.userId) ||
+        stableFeedId(it?.user_info?._id) ||
+        (it.username ? `u:${it.username}` : "") ||
+        `fallback:${fallback++}`
+      map.set(key, it)
+    }
     return Array.from(map.values())
   }, [q.data])
 

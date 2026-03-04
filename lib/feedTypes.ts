@@ -75,6 +75,45 @@ export type FeedPost = {
   edited_at: any
 }
 
+function hexFromBytes(bytes: number[]): string {
+  return bytes
+    .map((n) => Number(n).toString(16).padStart(2, "0"))
+    .join("")
+}
+
+export function stableFeedId(value: unknown): string | null {
+  if (typeof value === "string" || typeof value === "number") {
+    const out = String(value).trim()
+    if (out && out !== "[object Object]") return out
+    return null
+  }
+
+  if (!value || typeof value !== "object") return null
+
+  const obj = value as Record<string, unknown>
+
+  const direct = obj.$oid
+  if (typeof direct === "string" || typeof direct === "number") {
+    const out = String(direct).trim()
+    if (out && out !== "[object Object]") return out
+  }
+
+  // Mongo/BSON Buffer-like shape: { type: "Buffer", data: number[] }
+  if (obj.type === "Buffer" && Array.isArray(obj.data)) {
+    const bytes = obj.data.filter((n) => Number.isFinite(n)) as number[]
+    if (bytes.length) return hexFromBytes(bytes)
+  }
+
+  // Sometimes nested ids come as { id: {...} } or { _id: {...} }
+  const nestedCandidates = [obj.id, obj._id, obj.buffer]
+  for (const nested of nestedCandidates) {
+    const out = stableFeedId(nested)
+    if (out) return out
+  }
+
+  return null
+}
+
 export function normalizeFeedPayload(json: any): FeedUserDay[] {
   const list =
     json?.data?.response?.data ?? json?.response?.data ?? json?.data ?? []
@@ -88,7 +127,7 @@ export function normalizeFeedPayload(json: any): FeedUserDay[] {
             const type = String(p?.type || "post").toLowerCase() as FeedItemType
             if (!["post", "task", "event"].includes(type)) return null
 
-            const id = String(p?.id ?? p?._id ?? "")
+            const id = stableFeedId(p?.id) ?? stableFeedId(p?._id) ?? ""
             const base = {
               id,
               type,
@@ -103,7 +142,7 @@ export function normalizeFeedPayload(json: any): FeedUserDay[] {
                 content: String(p?.content ?? p?.data ?? ""),
                 media: Array.isArray(p?.media)
                   ? p.media.map((m: any) => ({
-                      _id: String(m._id ?? ""),
+                      _id: stableFeedId(m?._id) ?? "",
                       type: m.type,
                       url: m.url,
                       urls: m.urls ?? null,
@@ -149,7 +188,11 @@ export function normalizeFeedPayload(json: any): FeedUserDay[] {
       eventsCount: u.eventsCount,
       tasksCount: u.tasksCount,
       lastPostTime: u.lastPostTime,
-      userId: String(u.userId ?? u._id ?? ""),
+      userId:
+        stableFeedId(u.userId) ??
+        stableFeedId(u._id) ??
+        stableFeedId(u?.user_info?._id) ??
+        String(u.username ?? u?.user_info?.username ?? ""),
       username: String(u.username ?? u.user?.username ?? u.username ?? ""),
       userHandle: String(
         u.userHandle ?? u.handle ?? u.username ?? u.username ?? "",

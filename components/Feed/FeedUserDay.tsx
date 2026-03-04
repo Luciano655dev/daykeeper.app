@@ -168,14 +168,18 @@ export default function FeedUserDay({
           {items.map((item: any, idx: any) =>
             item?.type === "post" ? (
               <FeedPostItem
-                key={item.id}
+                key={item?.id ? `post-${item.id}` : `post-fallback-${idx}`}
                 post={item}
                 isLast={idx === items.length - 1}
                 onRefreshMedia={onRefreshMedia}
               />
             ) : (
               <FeedUserDayItemRow
-                key={`${item.type}-${item.id}`}
+                key={
+                  item?.id
+                    ? `${item.type}-${item.id}`
+                    : `${item?.type || "item"}-fallback-${idx}`
+                }
                 item={item}
                 isLast={idx === items.length - 1}
               />

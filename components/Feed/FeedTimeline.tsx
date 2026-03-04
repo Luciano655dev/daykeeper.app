@@ -71,7 +71,7 @@ export default function FeedTimeline({
       {!loading && data.length > 0 && (
         <div className="space-y-8 py-5">
           {data.map((userDay, idx) => (
-            <div key={userDay.userId}>
+            <div key={userDay?.userId ? `u-${userDay.userId}` : `u-fallback-${idx}`}>
               <FeedUserDay
                 userDay={userDay}
                 selectedDate={selectedDate}

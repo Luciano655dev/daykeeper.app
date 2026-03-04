@@ -48,6 +48,55 @@ function tooltipText(c: CalendarCell) {
   return `${date}\n${total}\nPosts: ${c.postsCount}\nTasks: ${c.tasksCount}\nEvents: ${c.eventsCount}`
 }
 
+function ActivityCalendarSkeleton() {
+  return (
+    <section className="border-t border-(--dk-ink)/10 px-4 py-4 sm:px-5">
+      <div className="animate-pulse rounded-xl bg-(--dk-mist)/20 p-3 sm:p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="space-y-2">
+            <div className="h-4 w-20 rounded bg-(--dk-mist)" />
+            <div className="h-3 w-40 rounded bg-(--dk-mist)" />
+          </div>
+          <div className="h-8 w-24 rounded-lg bg-(--dk-mist)" />
+        </div>
+
+        <div className="overflow-x-auto">
+          <div className="min-w-[760px]">
+            <div className="mb-1 ml-8 grid auto-cols-[12px] grid-flow-col gap-[4px]">
+              {Array.from({ length: 24 }).map((_, i) => (
+                <div key={`sm-${i}`} className="h-2 w-5 rounded bg-(--dk-mist)" />
+              ))}
+            </div>
+
+            <div className="flex items-start gap-2">
+              <div className="w-6">
+                <div className="grid grid-rows-7 gap-[4px]">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <div key={`sd-${i}`} className="h-[12px] rounded bg-transparent" />
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid auto-cols-[12px] grid-flow-col gap-[4px]">
+                {Array.from({ length: 54 }).map((_, wi) => (
+                  <div key={`sw-${wi}`} className="grid grid-rows-7 gap-[4px]">
+                    {Array.from({ length: 7 }).map((__, di) => (
+                      <div
+                        key={`sc-${wi}-${di}`}
+                        className="h-[12px] w-[12px] rounded-[3px] bg-(--dk-mist)"
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function ProfileActivityCalendar({
   username,
 }: {
@@ -133,13 +182,7 @@ export default function ProfileActivityCalendar({
   }, [data])
 
   if (q.isLoading) {
-    return (
-      <section className="border-t border-(--dk-ink)/10 px-4 py-4 sm:px-5">
-        <div className="rounded-xl bg-(--dk-mist)/30 p-4 text-sm text-(--dk-slate)">
-          Loading activity…
-        </div>
-      </section>
-    )
+    return <ActivityCalendarSkeleton />
   }
 
   if (q.isError) {
