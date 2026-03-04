@@ -8,6 +8,7 @@ import ProfileHeader from "@/components/User/UserHeader"
 import ProfileHeaderSkeleton from "@/components/User/ProfileHeaderSkeleton"
 import ProfileDaySkeleton from "@/components/User/ProfileDaySkeleton"
 import ProfileDay from "@/components/User/ProfileDay"
+import ProfileActivityCalendar from "@/components/User/ProfileActivityCalendar"
 import { useUserProfile } from "@/hooks/useUserProfile"
 
 function normalizeUsername(param: unknown) {
@@ -71,6 +72,7 @@ export default function UserPage() {
         {!loading && user && (
           <>
             <ProfileHeader user={user} />
+            <ProfileActivityCalendar username={user.username} />
 
             <div className="h-px bg-(--dk-ink)/10" />
 

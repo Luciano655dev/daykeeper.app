@@ -40,7 +40,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-(--dk-paper)">
+      <body className="bg-(--dk-paper)" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
