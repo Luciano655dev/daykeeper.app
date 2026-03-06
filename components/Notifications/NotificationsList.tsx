@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import {
   Bell,
+  ChevronRight,
   Heart,
   MessageCircle,
   UserCheck,
@@ -109,17 +110,21 @@ function NotificationRow({
           </div>
         ) : null}
       </div>
+
+      {isClickable ? (
+        <span className="mt-1 text-(--dk-slate)/65 transition group-hover:text-(--dk-sky) group-active:text-(--dk-sky)">
+          <ChevronRight size={16} />
+        </span>
+      ) : null}
     </>
   )
 
   const baseClass = [
-    "flex w-full gap-3 border-b border-(--dk-ink)/10 px-4 py-4 text-left transition hover:bg-(--dk-mist)/35 sm:px-5",
-    isNew
-      ? "bg-(--dk-sky)/10"
-      : "bg-(--dk-paper)",
+    "group flex w-full gap-3 border-b border-(--dk-ink)/10 px-4 py-4 text-left sm:px-5",
+    isNew ? "bg-(--dk-sky)/10" : "bg-(--dk-paper)",
     isClickable
-      ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--dk-sky)/60"
-      : "",
+      ? "cursor-pointer transition hover:bg-(--dk-mist)/35 active:bg-(--dk-mist)/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--dk-sky)/60"
+      : "cursor-default text-(--dk-ink)/88",
   ].join(" ")
 
   if (isClickable) {

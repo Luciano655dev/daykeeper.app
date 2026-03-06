@@ -1,9 +1,12 @@
 "use client"
 
-import { Search, Bell, Plus, CalendarDays, CheckSquare2, EyeOff } from "lucide-react"
+import { Search, Bell, Plus, CalendarDays, CheckSquare2, EyeOff, ChevronRight } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useNotifications } from "@/hooks/useNotifications"
+import {
+  isMediaReviewNotification,
+  useNotifications,
+} from "@/hooks/useNotifications"
 
 const QUICK_ACTIONS = [
   { label: "Post", icon: Plus, href: "/post/create" },
@@ -31,16 +34,34 @@ function stableKey(id: unknown, index: number, extra?: unknown) {
   return `${ex}-${index}`
 }
 
+function extractRoute(n: any): string {
+  const direct = typeof n?.route === "string" ? n.route.trim() : ""
+  if (direct) return direct
+  const nested = typeof n?.data?.route === "string" ? n.data.route.trim() : ""
+  return nested
+}
+
 export default function RightPanel() {
   const router = useRouter()
   const [query, setQuery] = useState("")
   const debounceRef = useRef<any>(null)
-  const { items, loading, unreadCount } = useNotifications()
+  const { items, loading } = useNotifications()
 
-  const topNotifications = useMemo(() => items.slice(0, 3), [items])
-  const newNotifications = useMemo(
-    () => items.filter((n) => !n.read).slice(0, 3),
+  const visibleNotifications = useMemo(
+    () => items.filter((n) => !isMediaReviewNotification(n)),
     [items]
+  )
+  const visibleUnreadCount = useMemo(
+    () => visibleNotifications.reduce((acc, n) => acc + (n.read ? 0 : 1), 0),
+    [visibleNotifications]
+  )
+  const topNotifications = useMemo(
+    () => visibleNotifications.slice(0, 3),
+    [visibleNotifications]
+  )
+  const newNotifications = useMemo(
+    () => visibleNotifications.filter((n) => !n.read).slice(0, 3),
+    [visibleNotifications]
   )
   const todayParam = useMemo(() => {
     const d = new Date()
@@ -129,7 +150,7 @@ export default function RightPanel() {
         </div>
 
         {/* New notifications */}
-        {!hideNotifications && unreadCount > 0 ? (
+        {!hideNotifications && visibleUnreadCount > 0 ? (
           <div className="overflow-hidden rounded-xl bg-(--dk-paper)">
             <div className="flex items-center justify-between border-b border-(--dk-ink)/10 px-4 py-3">
               <h2 className="text-sm font-semibold text-(--dk-ink)">New</h2>
@@ -153,7 +174,20 @@ export default function RightPanel() {
 
             <div className="divide-y divide-(--dk-ink)/10">
               {newNotifications.map((n, idx) => (
-                <div key={stableKey(n._id, idx, n.created_at)} className="px-4 py-3 transition hover:bg-(--dk-mist)/28">
+                <div
+                  key={stableKey(n._id, idx, n.created_at)}
+                  className={[
+                    "px-4 py-3",
+                    extractRoute(n)
+                      ? "cursor-pointer transition hover:bg-(--dk-mist)/28 active:bg-(--dk-mist)/45"
+                      : "opacity-90",
+                  ].join(" ")}
+                  onClick={() => {
+                    const route = extractRoute(n)
+                    if (!route) return
+                    router.push(route)
+                  }}
+                >
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-(--dk-mist)/65 text-(--dk-sky)">
                       <Bell size={14} />
@@ -168,6 +202,11 @@ export default function RightPanel() {
                         </div>
                       ) : null}
                     </div>
+                    {extractRoute(n) ? (
+                      <span className="mt-0.5 text-(--dk-slate)/70">
+                        <ChevronRight size={14} />
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               ))}
@@ -211,7 +250,20 @@ export default function RightPanel() {
           ) : (
             <div className="divide-y divide-(--dk-ink)/10">
               {topNotifications.map((n, idx) => (
-                <div key={stableKey(n._id, idx, n.created_at)} className="px-4 py-3 transition hover:bg-(--dk-mist)/28">
+                <div
+                  key={stableKey(n._id, idx, n.created_at)}
+                  className={[
+                    "px-4 py-3",
+                    extractRoute(n)
+                      ? "cursor-pointer transition hover:bg-(--dk-mist)/28 active:bg-(--dk-mist)/45"
+                      : "opacity-90",
+                  ].join(" ")}
+                  onClick={() => {
+                    const route = extractRoute(n)
+                    if (!route) return
+                    router.push(route)
+                  }}
+                >
                   <div className="flex items-start gap-2">
                     <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-(--dk-mist)/70 text-(--dk-sky)">
                       <Bell size={14} className="flex-none" />
@@ -226,6 +278,11 @@ export default function RightPanel() {
                         </div>
                       ) : null}
                     </div>
+                    {extractRoute(n) ? (
+                      <span className="mt-0.5 text-(--dk-slate)/70">
+                        <ChevronRight size={14} className="flex-none" />
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               ))}

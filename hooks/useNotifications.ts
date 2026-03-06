@@ -17,6 +17,13 @@ export type NotificationItem = {
   created_at?: string
 }
 
+export function isMediaReviewNotification(item: NotificationItem): boolean {
+  const t = String(item?.type || "").toLowerCase()
+  if (t.includes("media_review") || t.includes("media-review")) return true
+  const title = String(item?.title || "").toLowerCase()
+  return title.includes("media review")
+}
+
 type NotificationsResponse = {
   message?: string
   data?: NotificationItem[]

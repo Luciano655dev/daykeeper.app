@@ -2,9 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, UserPlus } from "lucide-react"
+import { ArrowLeft, Film, UserPlus } from "lucide-react"
 import NotificationsList from "@/components/Notifications/NotificationsList"
-import { useNotifications } from "@/hooks/useNotifications"
+import {
+  isMediaReviewNotification,
+  useNotifications,
+} from "@/hooks/useNotifications"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
@@ -53,14 +56,22 @@ export default function NotificationsPage() {
   }, [])
 
   const displayUnreadCount = unreadCount
+  const mediaReviewItems = useMemo(
+    () => items.filter((it) => isMediaReviewNotification(it)),
+    [items]
+  )
+  const regularItems = useMemo(
+    () => items.filter((it) => !isMediaReviewNotification(it)),
+    [items]
+  )
 
   const unreadIds = useMemo(
     () =>
-      items
+      regularItems
         .filter((it) => !it.read)
         .map((it) => toStableId(it._id))
         .filter(Boolean),
-    [items]
+    [regularItems]
   )
 
   useEffect(() => {
@@ -104,10 +115,24 @@ export default function NotificationsPage() {
               </button>
             ) : null}
           </div>
+
+          <div className="px-4 pb-3 sm:px-5">
+            <button
+              type="button"
+              onClick={() => router.push("/notifications/media-reviews")}
+              className="inline-flex items-center gap-2 rounded-lg bg-(--dk-mist)/75 px-3 py-2 text-xs font-medium text-(--dk-ink) transition hover:bg-(--dk-sky)/20"
+            >
+              <Film size={14} />
+              Media reviews
+              <span className="rounded-md bg-(--dk-paper)/85 px-1.5 py-0.5 text-[11px] text-(--dk-slate)">
+                {mediaReviewItems.length}
+              </span>
+            </button>
+          </div>
         </div>
 
         <NotificationsList
-          items={items}
+          items={regularItems}
           loading={loading}
           loadingMore={loadingMore}
           hasMore={hasMore}
