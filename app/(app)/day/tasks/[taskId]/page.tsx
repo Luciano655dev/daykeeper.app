@@ -9,14 +9,12 @@ import {
   Trash2,
   Flag,
   Ban,
-  CheckSquare2,
-  Square,
-  Loader2,
 } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { useTaskDetail } from "@/hooks/useTaskDetail"
 import { useMe } from "@/lib/useMe"
+import { isSameUsername } from "@/lib/ownership"
 
 import UserDayListRow from "@/components/UserDay/UserDayListRow"
 import ContentHeader from "@/components/common/ContentHeader"
@@ -28,6 +26,7 @@ import RichText from "@/components/common/RichText"
 
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
+import TaskCompletionToggle from "@/components/Task/TaskCompletionToggle"
 
 type ApiOk<T> = { message?: string; data?: T }
 
@@ -35,64 +34,6 @@ function formatTime(iso?: string) {
   if (!iso) return ""
   const d = new Date(iso)
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-}
-
-function TaskStatusPill({
-  done,
-  clickable,
-  busy,
-  onToggle,
-}: {
-  done: boolean
-  clickable?: boolean
-  busy?: boolean
-  onToggle?: () => void
-}) {
-  const Icon = done ? CheckSquare2 : Square
-
-  return (
-    <button
-      type="button"
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if (!clickable || busy) return
-        onToggle?.()
-      }}
-      disabled={!clickable || busy}
-      className={[
-        "inline-flex items-center justify-center",
-        "h-9 w-9 rounded-xl border",
-        "transition",
-        clickable ? "cursor-pointer" : "cursor-default",
-        done
-          ? "bg-(--dk-sky)/10 border-(--dk-sky)/25 text-(--dk-sky)"
-          : "bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate)",
-        clickable && !done
-          ? "hover:bg-(--dk-mist)/60"
-          : clickable && done
-            ? "hover:bg-(--dk-sky)/15"
-            : "",
-        busy ? "opacity-70" : "",
-      ].join(" ")}
-      aria-label={done ? "Task completed" : "Task not completed"}
-      title={
-        clickable
-          ? done
-            ? "Mark as not completed"
-            : "Mark as completed"
-          : done
-            ? "Completed"
-            : "Not completed"
-      }
-    >
-      {busy ? (
-        <Loader2 size={18} className="animate-spin" />
-      ) : (
-        <Icon size={18} />
-      )}
-    </button>
-  )
 }
 
 function safeApiMessage(err: any) {
@@ -143,8 +84,7 @@ export default function TaskPage() {
     [task?.edited_at],
   )
 
-  const isOwner =
-    !!me?._id && !!task?.user && String(me._id) === String(task.user)
+  const isOwner = isSameUsername(me?.username, task?.user_info?.username)
 
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [toggleBusy, setToggleBusy] = useState(false)
@@ -358,10 +298,10 @@ export default function TaskPage() {
                 </span>
               }
               right={
-                <TaskStatusPill
-                  done={done}
-                  clickable={isOwner}
-                  busy={toggleBusy}
+                    <TaskCompletionToggle
+                      done={done}
+                      clickable={isOwner}
+                      busy={toggleBusy}
                   onToggle={toggleCompleted}
                 />
               }

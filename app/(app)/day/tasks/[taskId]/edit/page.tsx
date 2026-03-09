@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Square, CheckSquare2 } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { apiFetch } from "@/lib/authClient"
@@ -14,6 +14,7 @@ import FormAlert from "@/components/Form/FormAlert"
 import PrivacyPicker, {
   type PrivacyValue,
 } from "@/components/common/PrivacyPicker"
+import TaskCompletionToggle from "@/components/Task/TaskCompletionToggle"
 
 type ApiOk<T> = { message?: string; data?: T }
 
@@ -75,41 +76,6 @@ function combineDateTime(date: string, time: string) {
   const t = time?.trim() ? time.trim() : "00:00"
   const d = new Date(`${date}T${t}:00`)
   return d.toISOString()
-}
-
-function TaskStatusToggle({
-  done,
-  disabled,
-  onToggle,
-}: {
-  done: boolean
-  disabled?: boolean
-  onToggle: () => void
-}) {
-  const Icon = done ? CheckSquare2 : Square
-
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        if (disabled) return
-        onToggle()
-      }}
-      disabled={disabled}
-      className={[
-        "inline-flex items-center gap-2",
-        "rounded-xl border px-3 py-2 text-sm transition",
-        done
-          ? "bg-(--dk-sky)/10 border-(--dk-sky)/25 text-(--dk-sky)"
-          : "bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate)",
-        !disabled ? "hover:bg-(--dk-mist)/60 cursor-pointer" : "opacity-60",
-      ].join(" ")}
-      aria-pressed={done}
-    >
-      <Icon size={18} />
-      <span>{done ? "Completed" : "Not completed"}</span>
-    </button>
-  )
 }
 
 export default function EditTaskPage() {
@@ -322,9 +288,10 @@ export default function EditTaskPage() {
                 Status
               </div>
 
-              <TaskStatusToggle
+              <TaskCompletionToggle
                 done={completed}
-                disabled={busy}
+                clickable={!busy}
+                showLabel
                 onToggle={() => setCompleted((v) => !v)}
               />
             </div>

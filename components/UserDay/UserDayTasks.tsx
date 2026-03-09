@@ -2,8 +2,6 @@
 
 import { useMemo, useState } from "react"
 import {
-  CheckSquare2,
-  Square,
   Clock,
   ClipboardList,
   Loader2,
@@ -21,6 +19,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useMe } from "@/lib/useMe"
 import RichText from "@/components/common/RichText"
 import { stableFeedId } from "@/lib/feedTypes"
+import TaskCompletionToggle from "@/components/Task/TaskCompletionToggle"
+import { isSameUsername } from "@/lib/ownership"
 
 type ApiOk<T> = { message?: string; data?: T }
 
@@ -51,64 +51,6 @@ async function readJsonSafe<T>(res: Response): Promise<T | null> {
   } catch {
     return null
   }
-}
-
-function TaskStatusPill({
-  done,
-  clickable,
-  busy,
-  onToggle,
-}: {
-  done: boolean
-  clickable?: boolean
-  busy?: boolean
-  onToggle?: () => void
-}) {
-  const Icon = done ? CheckSquare2 : Square
-
-  return (
-    <button
-      type="button"
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if (!clickable || busy) return
-        onToggle?.()
-      }}
-      disabled={!clickable || busy}
-      className={[
-        "inline-flex items-center justify-center",
-        "h-8 w-8 rounded-lg",
-        "transition",
-        clickable ? "cursor-pointer" : "cursor-default",
-        done
-          ? "bg-(--dk-sky)/12 text-(--dk-sky)"
-          : "bg-(--dk-mist)/55 text-(--dk-slate)",
-        clickable && !done
-          ? "hover:bg-(--dk-mist)/75"
-          : clickable && done
-            ? "hover:bg-(--dk-sky)/18"
-            : "",
-        busy ? "opacity-70" : "",
-      ].join(" ")}
-      aria-label={done ? "Task completed" : "Task not completed"}
-      title={
-        clickable
-          ? done
-            ? "Mark as not completed"
-            : "Mark as completed"
-          : done
-            ? "Completed"
-            : "Not completed"
-      }
-    >
-      {busy ? (
-        <Loader2 size={18} className="animate-spin" />
-      ) : (
-        <Icon size={18} />
-      )}
-    </button>
-  )
 }
 
 export default function UserDayTasks({
@@ -156,8 +98,7 @@ export default function UserDayTasks({
     const id = String(task?._id || "")
     if (!id) return
 
-    const isOwner =
-      !!me?._id && !!task?.user && String(me._id) === String(task.user)
+    const isOwner = isSameUsername(me?.username, task?.user_info?.username)
 
     if (!isOwner) return
     if (busyMap[id]) return
@@ -281,8 +222,7 @@ export default function UserDayTasks({
           const id = stableFeedId(t?._id) || stableFeedId(t?.id) || ""
           const done = !!t.completed
 
-          const isOwner =
-            !!me?._id && !!t?.user && String(me._id) === String(t.user)
+          const isOwner = isSameUsername(me?.username, t?.user_info?.username)
 
           const rowErr = id ? errMap[id] : null
           const rowBusy = id ? !!busyMap[id] : false
@@ -320,7 +260,7 @@ export default function UserDayTasks({
                   </span>
                 }
                 right={
-                  <TaskStatusPill
+                  <TaskCompletionToggle
                     done={done}
                     clickable={isOwner}
                     busy={rowBusy}

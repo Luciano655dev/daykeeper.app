@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 
 import NotificationsList from "@/components/Notifications/NotificationsList"
-import {
-  isMediaReviewNotification,
-  useNotifications,
-} from "@/hooks/useNotifications"
+import { useNotifications } from "@/hooks/useNotifications"
 
 function toStableId(id: unknown): string {
   if (typeof id === "string" || typeof id === "number") return String(id)
@@ -32,10 +29,7 @@ export default function MediaReviewsNotificationsPage() {
     markRead,
   } = useNotifications("media-review")
 
-  const mediaItems = useMemo(
-    () => items.filter((it) => isMediaReviewNotification(it)),
-    [items]
-  )
+  const mediaItems = useMemo(() => items, [items])
 
   const unreadIds = useMemo(
     () =>

@@ -4,10 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Film, UserPlus } from "lucide-react"
 import NotificationsList from "@/components/Notifications/NotificationsList"
-import {
-  isMediaReviewNotification,
-  useNotifications,
-} from "@/hooks/useNotifications"
+import { useNotifications } from "@/hooks/useNotifications"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
 
@@ -56,10 +53,7 @@ export default function NotificationsPage() {
   }, [])
 
   const displayUnreadCount = unreadCount
-  const regularItems = useMemo(
-    () => items.filter((it) => !isMediaReviewNotification(it)),
-    [items]
-  )
+  const regularItems = useMemo(() => items, [items])
   const unreadIds = useMemo(
     () =>
       regularItems

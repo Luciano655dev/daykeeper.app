@@ -2,12 +2,13 @@
 
 import { useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { CalendarDays, ClipboardList, CheckSquare2, Square } from "lucide-react"
+import { CalendarDays, ClipboardList } from "lucide-react"
 
 import type { FeedUserDayItem } from "@/lib/feedTypes"
 import { stableFeedId } from "@/lib/feedTypes"
 import UserDayListRow from "@/components/UserDay/UserDayListRow"
 import PrivacyChip from "@/components/common/PrivacyChip"
+import TaskCompletionToggle from "@/components/Task/TaskCompletionToggle"
 
 function formatTime(iso?: string) {
   if (!iso) return ""
@@ -129,15 +130,9 @@ export default function FeedUserDayItemRow({
         })()
       : item.type === "task"
         ? (() => {
-            const done = !!item.completed
-            const Icon = done ? CheckSquare2 : Square
-            return (
-              <div className="inline-flex items-center justify-center h-9 w-9 rounded-xl border transition bg-(--dk-paper)/60 border-(--dk-ink)/10 text-(--dk-slate)">
-                <Icon
-                  size={18}
-                  className={done ? "text-(--dk-sky)" : "text-(--dk-slate)"}
-                />
-              </div>
+          const done = !!item.completed
+          return (
+              <TaskCompletionToggle done={done} />
             )
           })()
         : null

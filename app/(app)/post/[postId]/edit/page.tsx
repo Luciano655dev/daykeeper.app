@@ -8,6 +8,7 @@ import { usePostDetail } from "@/hooks/usePostDetail"
 import { useMe } from "@/lib/useMe"
 import { apiFetch } from "@/lib/authClient"
 import { API_URL } from "@/config"
+import { isSameUsername } from "@/lib/ownership"
 
 import FormField from "@/components/Form/FormField"
 import FormButton from "@/components/Form/FormButton"
@@ -48,8 +49,7 @@ export default function EditPostPage() {
   const post = q.data?.post
   const user = q.data?.user
 
-  const isOwner =
-    !!me?._id && !!user?._id && String(me._id) === String(user._id)
+  const isOwner = isSameUsername(me?.username, user?.username)
 
   const [content, setContent] = useState("")
   const [privacyUi, setPrivacyUi] = useState<PrivacyUi>("public")

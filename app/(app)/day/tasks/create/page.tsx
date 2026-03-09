@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, CheckSquare2, Square, ClipboardList } from "lucide-react"
+import { ArrowLeft, ClipboardList } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { apiFetch } from "@/lib/authClient"
@@ -11,6 +11,7 @@ import FormAlert from "@/components/Form/FormAlert"
 import PrivacyPicker, {
   type PrivacyValue,
 } from "@/components/common/PrivacyPicker"
+import TaskCompletionToggle from "@/components/Task/TaskCompletionToggle"
 import { useDailyTasks } from "@/hooks/useDailyTasks"
 import { toDDMMYYYY } from "@/lib/date"
 
@@ -232,19 +233,12 @@ function CreateTaskForm() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setCompleted((v) => !v)}
-              className={[
-                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition",
-                completed
-                  ? "bg-(--dk-sky)/12 text-(--dk-sky)"
-                  : "bg-(--dk-mist)/55 text-(--dk-slate)",
-              ].join(" ")}
-            >
-              {completed ? <CheckSquare2 size={18} /> : <Square size={18} />}
-              {completed ? "Completed" : "Not completed"}
-            </button>
+            <TaskCompletionToggle
+              done={completed}
+              clickable
+              showLabel
+              onToggle={() => setCompleted((v) => !v)}
+            />
 
             <button
               type="button"

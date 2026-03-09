@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query"
 
 import { useEventDetail } from "@/hooks/useEventDetail"
 import { useMe } from "@/lib/useMe"
+import { isSameUsername } from "@/lib/ownership"
 
 import UserDayListRow from "@/components/UserDay/UserDayListRow"
 import ContentHeader from "@/components/common/ContentHeader"
@@ -104,7 +105,7 @@ export default function EventPage() {
     [ev?.edited_at],
   )
 
-  const isOwner = !!me?._id && !!ev?.user && String(me._id) === String(ev.user)
+  const isOwner = isSameUsername(me?.username, ev?.user_info?.username)
 
   const [deleteOpen, setDeleteOpen] = useState(false)
 

@@ -11,6 +11,7 @@ import { useCommentReplies } from "@/hooks/useCommentReplies"
 import RichText from "@/components/common/RichText"
 import RichTextarea from "@/components/common/RichTextarea"
 import { resolveProfilePictureUrl } from "@/lib/media"
+import { isSameUsername } from "@/lib/ownership"
 
 const AVATAR_FALLBACK = "/avatar-placeholder.png"
 
@@ -33,7 +34,7 @@ export default function CommentItem({ c }: { c: PostComment }) {
   const avatar = resolveProfilePictureUrl(c.user, AVATAR_FALLBACK)
   const handle = c.user?.username ? `@${c.user.username}` : ""
   const me = useMe()
-  const isOwner = !!me?._id && me._id === c.user?._id
+  const isOwner = isSameUsername(me?.username, c.user?.username)
 
   const [liked, setLiked] = useState(!!c.userLiked)
   const [likeCount, setLikeCount] = useState<number>(

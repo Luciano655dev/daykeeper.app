@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/authClient"
 import type { FeedPost } from "@/lib/feedTypes"
 import { API_URL } from "@/config"
+import { isSameUsername } from "@/lib/ownership"
 
 type UserInfo = {
   _id: string
@@ -19,7 +20,7 @@ type PostDetailResult = {
   isOwner: boolean // NEW
 }
 
-async function fetchMe(): Promise<{ _id: string } | null> {
+async function fetchMe(): Promise<{ _id: string; username: string } | null> {
   try {
     const res = await apiFetch(`${API_URL}/auth/user`, {
       method: "GET",
@@ -28,8 +29,9 @@ async function fetchMe(): Promise<{ _id: string } | null> {
     if (!res.ok) return null
     const json = await res.json().catch(() => ({}))
     const me = json?.data || json
-    if (!me?._id) return null
-    return { _id: String(me._id) }
+    const username = String(me?.username || "")
+    if (!username) return null
+    return { _id: String(me?._id || ""), username }
   } catch {
     return null
   }
@@ -77,7 +79,7 @@ async function fetchPostDetail(postId: string): Promise<PostDetailResult> {
     userCommented: raw.userCommented ?? false,
   }
 
-  const isOwner = !!me?._id && me._id === user._id
+  const isOwner = isSameUsername(me?.username, user.username)
 
   return { post, user, postedAt: String(raw.date || ""), isOwner }
 }

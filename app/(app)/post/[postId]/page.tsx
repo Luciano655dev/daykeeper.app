@@ -15,6 +15,7 @@ import DeleteEntityModal from "@/components/common/DeleteEntityModal"
 import { usePostDetail } from "@/hooks/usePostDetail"
 import { useMe } from "@/lib/useMe"
 import formatDDMMYYYY from "@/utils/formatDate"
+import { isSameUsername } from "@/lib/ownership"
 
 function formatPostedAt(s?: string) {
   if (!s) return ""
@@ -37,8 +38,7 @@ export default function PostPage() {
   const user = q.data?.user ?? null
   const postedAt = q.data?.postedAt ?? ""
 
-  const isOwner =
-    !!me?._id && !!user?._id && String(me._id) === String(user._id)
+  const isOwner = isSameUsername(me?.username, user?.username)
 
   const stamp = useMemo(() => formatPostedAt(postedAt), [postedAt])
   const edited = useMemo(
