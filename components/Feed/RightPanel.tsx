@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Search, Bell, Plus, CalendarDays, CheckSquare2, EyeOff, ChevronRight } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -10,6 +11,28 @@ const QUICK_ACTIONS = [
   { label: "Event", icon: CalendarDays, href: "/day/events/create" },
   { label: "Task", icon: CheckSquare2, href: "/day/tasks/create" },
 ] as const
+
+const FOOTER_LINKS = [
+  { label: "About", href: "https://about.daykeeper.app" },
+  { label: "Status", href: "https://about.daykeeper.app/status" },
+  { label: "Terms", href: "https://about.daykeeper.app/terms" },
+  { label: "Privacy", href: "https://about.daykeeper.app/privacy" },
+  { label: "License", href: "https://about.daykeeper.app/license" },
+  { label: "API Docs", href: "https://docs.daykeeper.app" },
+  { label: "Instagram", href: "https://instagram.com/daykeeperapp" },
+  { label: "Contact", href: "mailto:contact@daykeeper.app" },
+  { label: "API Repo", href: "https://github.com/luciano655dev/daykeeper-api" },
+  { label: "App Repo", href: "https://github.com/luciano655dev/daykeeper.app" },
+  { label: "About Repo", href: "https://github.com/luciano655dev/about.daykeeper.app" },
+  { label: "Docs Repo", href: "https://github.com/luciano655dev/docs.daykeeper.app" },
+] as const
+
+type NotificationRouteSource = {
+  route?: string
+  data?: {
+    route?: string
+  }
+}
 
 function cleanText(v?: string) {
   if (!v) return ""
@@ -31,7 +54,7 @@ function stableKey(id: unknown, index: number, extra?: unknown) {
   return `${ex}-${index}`
 }
 
-function extractRoute(n: any): string {
+function extractRoute(n: NotificationRouteSource): string {
   const direct = typeof n?.route === "string" ? n.route.trim() : ""
   if (direct) return direct
   const nested = typeof n?.data?.route === "string" ? n.data.route.trim() : ""
@@ -41,7 +64,7 @@ function extractRoute(n: any): string {
 export default function RightPanel() {
   const router = useRouter()
   const [query, setQuery] = useState("")
-  const debounceRef = useRef<any>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { items: visibleNotifications, loading } = useNotifications("without-media-review")
   const visibleUnreadCount = useMemo(
     () => visibleNotifications.reduce((acc, n) => acc + (n.read ? 0 : 1), 0),
@@ -62,14 +85,14 @@ export default function RightPanel() {
     const dd = String(d.getDate()).padStart(2, "0")
     return `${yyyy}-${mm}-${dd}`
   }, [])
-  const [hideNotifications, setHideNotifications] = useState(false)
-
-  useEffect(() => {
+  const [hideNotifications, setHideNotifications] = useState(() => {
+    if (typeof window === "undefined") return false
     try {
-      const raw = localStorage.getItem("dk-hide-notifications")
-      if (raw === "1") setHideNotifications(true)
-    } catch {}
-  }, [])
+      return localStorage.getItem("dk-hide-notifications") === "1"
+    } catch {
+      return false
+    }
+  })
 
   useEffect(() => {
     try {
@@ -290,6 +313,30 @@ export default function RightPanel() {
             Show notifications
           </button>
         )}
+
+        <footer className="px-2 pt-3 text-xs leading-6 text-(--dk-slate)">
+          <div className="flex flex-wrap">
+            {FOOTER_LINKS.map((link, index) => (
+              <span key={link.href}>
+                <Link
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition hover:text-(--dk-ink)"
+                >
+                  {link.label}
+                </Link>
+                {index < FOOTER_LINKS.length - 1 ? (
+                  <span className="px-1.5 text-(--dk-slate)/70">·</span>
+                ) : null}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-4 uppercase tracking-[0.16em] text-(--dk-slate)/80">
+            © 2026 Daykeeper
+          </div>
+        </footer>
       </div>
     </aside>
   )
